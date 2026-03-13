@@ -1,0 +1,41 @@
+import type { CreateTodoInput, Todo } from "@/features/todos/todo-schema";
+
+const seededAt = new Date("2026-03-13T09:00:00.000Z");
+
+let todos: Todo[] = [
+  {
+    id: "todo-router",
+    title: "Inspect the generated route tree before changing layouts",
+    completed: false,
+    createdAt: seededAt.toISOString(),
+  },
+  {
+    id: "todo-query",
+    title: "Keep server data behind React Query hooks",
+    completed: true,
+    createdAt: new Date(seededAt.getTime() + 60_000).toISOString(),
+  },
+  {
+    id: "todo-zod",
+    title: "Validate request and response payloads with shared Zod schemas",
+    completed: false,
+    createdAt: new Date(seededAt.getTime() + 120_000).toISOString(),
+  },
+];
+
+export function listTodos(): Todo[] {
+  return [...todos].sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+}
+
+export function createTodo(input: CreateTodoInput): Todo {
+  const todo: Todo = {
+    id: `todo-${crypto.randomUUID()}`,
+    title: input.title,
+    completed: false,
+    createdAt: new Date().toISOString(),
+  };
+
+  todos = [todo, ...todos];
+
+  return todo;
+}
