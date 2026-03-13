@@ -11,7 +11,43 @@ const config = defineConfig({
   staged: {
     '*': 'vp check --fix'
   },
-  lint: { options: { typeAware: true, typeCheck: true } },
+  lint: {
+    plugins: ['react', 'typescript', 'unicorn'],
+    categories: {
+      correctness: 'error',
+      suspicious: 'warn'
+    },
+    rules: {
+      'react/react-in-jsx-scope': 'off'
+    },
+    overrides: [
+      {
+        files: ['src/components/**/*.{ts,tsx}'],
+        rules: {
+          'no-nested-ternary': 'error'
+        }
+      },
+      {
+        files: ['src/components/ui/**/*.{ts,tsx}', '**/*.stories.{ts,tsx}'],
+        rules: {
+          'no-nested-ternary': 'off'
+        }
+      }
+    ],
+    ignorePatterns: [
+      'out',
+      'build',
+      '.storybook',
+      '.storybook/**',
+      '**/*.stories.ts',
+      '**/*.stories.tsx',
+      'storybook-static',
+      'storybook-static/**',
+      'public/storybook',
+      'public/storybook/**'
+    ],
+    options: { typeAware: true, typeCheck: true }
+  },
   resolve: {
     tsconfigPaths: true
   },

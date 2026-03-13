@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 
 export function TodoAddForm() {
   const createTodoMutation = useCreateTodoMutation()
-  const [title, setTitle] = useState<string>('')
+  const [title, setTitle] = useState('')
   const [fieldError, setFieldError] = useState<string | null>(null)
   const canSubmit = title.trim().length > 0
 
