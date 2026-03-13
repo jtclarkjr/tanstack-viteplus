@@ -7,8 +7,13 @@
   },
   "scripts": {
     "dev": "vp dev --port 3000",
+    "dev:docker": "vp dev --host 0.0.0.0 --port 3000",
     "build": "vp build",
     "preview": "vp preview",
+    "storybook": "storybook dev -p 6006",
+    "storybook:docker": "storybook dev -p 6006 --host 0.0.0.0",
+    "build-storybook": "storybook build",
+    "start": "node .output/server/index.mjs",
     "test": "vp test run",
     "prepare": "vp config"
   },
@@ -35,6 +40,8 @@
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@storybook/addon-docs": "^10.2.18",
+    "@storybook/react-vite": "^10.2.18",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/devtools-vite": "latest",
     "@testing-library/dom": "^10.4.1",
@@ -45,6 +52,7 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.1.4",
     "jsdom": "^28.1.0",
+    "storybook": "^10.2.18",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.7.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",

@@ -1,58 +1,43 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { json } from "@tanstack/react-start";
-import { createTodo, listTodos } from "@/features/todos/todo-store";
+import { createFileRoute } from '@tanstack/react-router'
+import { createTodo, listTodos } from '@/features/todos/todo.store'
 import {
-  apiErrorSchema,
   createTodoInputSchema,
   createTodoResponseSchema,
-  listTodosResponseSchema,
-} from "@/features/todos/todo-schema";
+  listTodosResponseSchema
+} from '@/features/todos/todo.schema'
+import {
+  handleApiError,
+  parseInput,
+  parseJsonBody
+} from '@/lib/server/api-error'
 
-function buildValidationIssues(fieldErrors: Record<string, string[] | undefined>) {
-  return Object.fromEntries(
-    Object.entries(fieldErrors).filter((entry): entry is [string, string[]] =>
-      Boolean(entry[1]?.length),
-    ),
-  );
+export async function listTodosHandler({ request }: { request: Request }) {
+  try {
+    return Response.json(listTodosResponseSchema.parse({ items: listTodos() }))
+  } catch (error) {
+    return handleApiError(error, request)
+  }
 }
 
-export const Route = createFileRoute("/api/todos")({
+export async function createTodoHandler({ request }: { request: Request }) {
+  try {
+    const payload = await parseJsonBody(request)
+    const input = parseInput(createTodoInputSchema, payload)
+    const item = createTodo(input)
+
+    return Response.json(createTodoResponseSchema.parse({ item }), {
+      status: 201
+    })
+  } catch (error) {
+    return handleApiError(error, request)
+  }
+}
+
+export const Route = createFileRoute('/api/todos')({
   server: {
     handlers: {
-      GET: async () => {
-        return json(listTodosResponseSchema.parse({ items: listTodos() }));
-      },
-      POST: async ({ request }) => {
-        let payload: unknown;
-
-        try {
-          payload = await request.json();
-        } catch {
-          return json(apiErrorSchema.parse({ message: "Request body must be valid JSON." }), {
-            status: 400,
-          });
-        }
-
-        const parsed = createTodoInputSchema.safeParse(payload);
-
-        if (!parsed.success) {
-          return json(
-            apiErrorSchema.parse({
-              message: "Request body failed validation.",
-              issues: buildValidationIssues(parsed.error.flatten().fieldErrors),
-            }),
-            {
-              status: 400,
-            },
-          );
-        }
-
-        const item = createTodo(parsed.data);
-
-        return json(createTodoResponseSchema.parse({ item }), {
-          status: 201,
-        });
-      },
-    },
-  },
-});
+      GET: listTodosHandler,
+      POST: createTodoHandler
+    }
+  }
+})

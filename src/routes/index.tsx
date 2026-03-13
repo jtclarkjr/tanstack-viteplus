@@ -1,10 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { TodosPage } from "@/features/todos/todos-page";
+import { createFileRoute } from '@tanstack/react-router'
+import { TodosPage } from '@/features/todos/todos.page'
 
-export const Route = createFileRoute("/")({
-  component: HomePage,
-});
+export const Route = createFileRoute('/')({
+  component: HomePage
+})
 
 function HomePage() {
-  return <TodosPage />;
+  return <TodosPage />
 }
