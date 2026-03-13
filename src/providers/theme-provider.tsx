@@ -48,7 +48,7 @@ export const themeInitScript = `
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>('system')
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState<boolean>(false)
 
   useEffect(() => {
     const nextTheme = document.documentElement.dataset.theme
