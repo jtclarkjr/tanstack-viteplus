@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { createTodo, listTodos } from '@/features/todos/todo.store'
+import { createTodo, listTodos } from '@/features/todos/mock/todo.repository'
 import {
   createTodoInputSchema,
   createTodoResponseSchema,

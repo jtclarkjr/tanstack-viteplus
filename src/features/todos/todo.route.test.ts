@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
-import * as todoStore from '@/features/todos/todo.store'
+import * as todoRepository from '@/features/todos/mock/todo.repository'
 import { createTodoHandler } from '@/routes/api/todos'
 import {
   deleteTodoHandler,
@@ -84,8 +84,8 @@ describe('todo api route handlers', () => {
     expect(response.status).toBe(404)
   })
 
-  it('returns a generic 500 when the store throws unexpectedly', async () => {
-    vi.spyOn(todoStore, 'createTodo').mockImplementation(() => {
+  it('returns a generic 500 when the repository throws unexpectedly', async () => {
+    vi.spyOn(todoRepository, 'createTodo').mockImplementation(() => {
       throw new Error('storage unavailable')
     })
 

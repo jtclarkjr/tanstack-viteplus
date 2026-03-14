@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { deleteTodo, updateTodo } from '@/features/todos/todo.store'
+import { deleteTodo, updateTodo } from '@/features/todos/mock/todo.repository'
 import {
   deleteTodoResponseSchema,
   updateTodoInputSchema,

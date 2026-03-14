@@ -20,6 +20,7 @@
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.8",
     "@tanstack/react-devtools": "latest",
+    "@tanstack/react-form": "^1.28.5",
     "@tanstack/react-query": "latest",
     "@tanstack/react-query-devtools": "latest",
     "@tanstack/react-router": "latest",

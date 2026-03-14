@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useForm } from '@tanstack/react-form'
 import {
   AlertCircle,
   ArrowRight,
@@ -13,7 +14,7 @@ import {
   useDeleteTodoMutation,
   useUpdateTodoMutation
 } from '@/features/todos/todo.query'
-import { updateTodoInputSchema, type Todo } from '@/features/todos/todo.schema'
+import { createTodoInputSchema, type Todo } from '@/features/todos/todo.schema'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -27,13 +28,35 @@ function formatCreatedAt(value: string) {
   }).format(new Date(value))
 }
 
+function validateTodoTitle(value: string) {
+  const parsed = createTodoInputSchema.shape.title.safeParse(value)
+
+  return parsed.success
+    ? undefined
+    : (parsed.error.issues[0]?.message ?? 'Invalid todo title.')
+}
+
 export function TodoItem({ todo }: { todo: Todo }) {
   const updateTodoMutation = useUpdateTodoMutation()
   const deleteTodoMutation = useDeleteTodoMutation()
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  const [editTitle, setEditTitle] = useState<string>('')
-  const [editError, setEditError] = useState<string | null>(null)
-  const canSaveEdit = editTitle.trim().length > 0
+  const editForm = useForm({
+    defaultValues: {
+      title: todo.title
+    },
+    onSubmit: async ({ value, formApi }) => {
+      try {
+        await updateTodoMutation.mutateAsync({
+          id: todo.id,
+          input: {
+            title: value.title.trim()
+          }
+        })
+        setIsEditing(false)
+        formApi.reset({ title: todo.title })
+      } catch {}
+    }
+  })
 
   function getMutationIssue(error: unknown) {
     if (error instanceof ApiClientError) {
@@ -55,33 +78,13 @@ export function TodoItem({ todo }: { todo: Todo }) {
     getMutationIssue(deleteTodoMutation.error)
 
   function startEditing() {
+    editForm.reset({ title: todo.title })
     setIsEditing(true)
-    setEditTitle(todo.title)
-    setEditError(null)
   }
 
   function cancelEditing() {
     setIsEditing(false)
-    setEditTitle('')
-    setEditError(null)
-  }
-
-  function handleUpdate() {
-    const parsed = updateTodoInputSchema.safeParse({ title: editTitle })
-
-    if (!parsed.success) {
-      setEditError(
-        parsed.error.flatten().fieldErrors.title?.[0] ?? 'Invalid todo title.'
-      )
-      return
-    }
-
-    setEditError(null)
-
-    updateTodoMutation.mutate(
-      { id: todo.id, input: parsed.data },
-      { onSuccess: () => cancelEditing() }
-    )
+    editForm.reset({ title: todo.title })
   }
 
   function toggleCompleted() {
@@ -174,47 +177,95 @@ export function TodoItem({ todo }: { todo: Todo }) {
       </CardContent>
       {isEditing ? (
         <CardContent className="border-t border-border/70 px-4 py-4">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <div className="flex-1 space-y-2">
-              <label
-                className="text-sm font-medium"
-                htmlFor={`edit-${todo.id}`}
-              >
-                Edit title
-              </label>
-              <Input
-                id={`edit-${todo.id}`}
-                value={editTitle}
-                onChange={(event) => {
-                  setEditTitle(event.target.value)
-                  if (editError && event.target.value.trim().length > 0) {
-                    setEditError(null)
-                  }
+          <form
+            className="space-y-3"
+            onSubmit={(event) => {
+              event.preventDefault()
+              void editForm.handleSubmit()
+            }}
+          >
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <editForm.Field
+                name="title"
+                validators={{
+                  onChange: ({ value }) => validateTodoTitle(value),
+                  onSubmit: ({ value }) => validateTodoTitle(value)
                 }}
-              />
-            </div>
-            <div className="flex items-end gap-2">
-              <Button
-                disabled={updateTodoMutation.isPending || !canSaveEdit}
-                onClick={handleUpdate}
-                type="button"
               >
-                <Save className="size-4" />
-                Save
-              </Button>
-              <Button onClick={cancelEditing} type="button" variant="ghost">
-                <X className="size-4" />
-                Cancel
-              </Button>
+                {(field) => {
+                  const editError = field.state.meta.errors[0]
+                  const shouldShowEditError =
+                    Boolean(editError) &&
+                    (field.state.meta.isTouched ||
+                      editForm.state.submissionAttempts > 0)
+
+                  return (
+                    <>
+                      <div className="flex-1 space-y-2">
+                        <label
+                          className="text-sm font-medium"
+                          htmlFor={`edit-${todo.id}`}
+                        >
+                          Edit title
+                        </label>
+                        <Input
+                          id={`edit-${todo.id}`}
+                          name={field.name}
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(event) => {
+                            field.handleChange(event.target.value)
+                          }}
+                          aria-invalid={shouldShowEditError}
+                        />
+                      </div>
+                      <editForm.Subscribe
+                        selector={(state) => ({
+                          isSubmitting: state.isSubmitting,
+                          isValid: state.isValid,
+                          title: state.values.title
+                        })}
+                      >
+                        {(state) => (
+                          <div className="flex items-end gap-2">
+                            <Button
+                              disabled={
+                                updateTodoMutation.isPending ||
+                                state.isSubmitting ||
+                                !state.isValid ||
+                                state.title.trim().length === 0
+                              }
+                              type="submit"
+                            >
+                              <Save className="size-4" />
+                              Save
+                            </Button>
+                            <Button
+                              onClick={cancelEditing}
+                              type="button"
+                              variant="ghost"
+                            >
+                              <X className="size-4" />
+                              Cancel
+                            </Button>
+                          </div>
+                        )}
+                      </editForm.Subscribe>
+                      {shouldShowEditError ? (
+                        <Alert className="sm:col-span-2" variant="destructive">
+                          <AlertCircle className="size-4" />
+                          <AlertTitle>Update failed validation</AlertTitle>
+                          <AlertDescription>
+                            {String(editError)}
+                          </AlertDescription>
+                        </Alert>
+                      ) : null}
+                    </>
+                  )
+                }}
+              </editForm.Field>
             </div>
-          </div>
-          {editError ? (
-            <Alert className="mt-3" variant="destructive">
-              <AlertCircle className="size-4" />
-              <AlertTitle>Update failed validation</AlertTitle>
-              <AlertDescription>{editError}</AlertDescription>
-            </Alert>
-          ) : null}
+          </form>
         </CardContent>
       ) : null}
     </Card>

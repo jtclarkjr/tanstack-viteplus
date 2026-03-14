@@ -119,6 +119,56 @@ describe('TodosPage', () => {
     })
   })
 
+  it('shows client-side validation and skips create when the form is submitted empty', async () => {
+    const todos = [
+      {
+        id: 'todo-router',
+        title: 'Inspect the generated route tree before changing layouts',
+        completed: false,
+        createdAt: '2026-03-13T09:00:00.000Z'
+      }
+    ]
+
+    fetchMock.mockImplementation(async (input, init) => {
+      const url =
+        typeof input === 'string'
+          ? input
+          : input instanceof URL
+            ? input.pathname
+            : input.url
+
+      if (url === '/api/todos' && (!init?.method || init.method === 'GET')) {
+        return new Response(JSON.stringify({ items: todos }), {
+          status: 200,
+          headers: {
+            'content-type': 'application/json'
+          }
+        })
+      }
+
+      throw new Error(`Unhandled fetch ${String(init?.method ?? 'GET')} ${url}`)
+    })
+
+    renderPage()
+
+    await screen.findByText(
+      'Inspect the generated route tree before changing layouts'
+    )
+
+    const createForm = screen.getByLabelText('New todo').closest('form')
+
+    if (!createForm) {
+      throw new Error('Expected create form to be rendered')
+    }
+
+    fireEvent.submit(createForm)
+
+    await screen.findByText('Give the todo a title.')
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
+    })
+  })
+
   it('updates and deletes todos from the list', async () => {
     const todos = [
       {
@@ -218,6 +268,67 @@ describe('TodosPage', () => {
       expect(
         screen.queryByText('Keep server data behind React Query hooks')
       ).toBeNull()
+    })
+  })
+
+  it('shows client-side validation and skips update when the edit form is submitted empty', async () => {
+    const todos = [
+      {
+        id: 'todo-router',
+        title: 'Inspect the generated route tree before changing layouts',
+        completed: false,
+        createdAt: '2026-03-13T09:00:00.000Z'
+      }
+    ]
+
+    fetchMock.mockImplementation(async (input, init) => {
+      const url =
+        typeof input === 'string'
+          ? input
+          : input instanceof URL
+            ? input.pathname
+            : input.url
+      const method = init?.method ?? 'GET'
+
+      if (url === '/api/todos' && method === 'GET') {
+        return new Response(JSON.stringify({ items: todos }), {
+          status: 200,
+          headers: {
+            'content-type': 'application/json'
+          }
+        })
+      }
+
+      throw new Error(`Unhandled fetch ${String(method)} ${url}`)
+    })
+
+    renderPage()
+
+    await screen.findByText(
+      'Inspect the generated route tree before changing layouts'
+    )
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Edit Inspect the generated route tree before changing layouts'
+      })
+    )
+
+    const editInput = screen.getByLabelText('Edit title')
+    const editForm = editInput.closest('form')
+
+    if (!editForm) {
+      throw new Error('Expected edit form to be rendered')
+    }
+
+    fireEvent.change(editInput, {
+      target: { value: '' }
+    })
+    fireEvent.submit(editForm)
+
+    await screen.findByText('Give the todo a title.')
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1)
     })
   })
 })

@@ -169,7 +169,7 @@ The todo feature is the reference implementation for adding new resources:
 
 ## What the example proves
 
-1. The browser validates form input with `createTodoInputSchema`
+1. TanStack Form validates browser input with `createTodoInputSchema`
 2. The API route validates the same payload again on the server
 3. The API route validates its own JSON response shape before returning it
 4. The client parses the response with the same Zod schemas before exposing it
