@@ -1,4 +1,4 @@
-# TanStack Start + VitePlus Boilerplate
+# TanStack Start and Vite+ Boilerplate
 
 This starter keeps the app small while showing the full pattern for a validated
 internal API:
@@ -15,6 +15,8 @@ manager directly or defaulting to `package.json` scripts. In this repo, `vp` is
 the primary interface for install, dev, build, lint, format, and test workflows;
 package scripts are mainly for project-specific cases such as Docker
 entrypoints.
+
+**Note:** Vite+ is still in the alpha phase and is fully open sourced
 
 - TanStack Start with file-based routing (see
   [docs/ROUTING.md](docs/ROUTING.md))
