@@ -63,7 +63,13 @@ export function TodoAddForm() {
           }}
         >
           {(field) => {
-            const fieldError = field.state.meta.errors[0]
+            const rawError = field.state.meta.errors[0]
+            const fieldError =
+              typeof rawError === 'object' &&
+              rawError !== null &&
+              'message' in rawError
+                ? rawError.message
+                : rawError
             const shouldShowFieldError =
               Boolean(fieldError) &&
               (field.state.meta.isTouched || form.state.submissionAttempts > 0)
