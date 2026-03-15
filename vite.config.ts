@@ -51,13 +51,15 @@ const config = defineConfig({
   },
   test: {
     environment: 'jsdom',
-    setupFiles: ['./src/test/setup.ts']
+    setupFiles: ['./src/test/setup.ts'],
+    pool: 'forks'
   },
   plugins: [
-    devtools(),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+    !process.env.VITEST && devtools(),
+    !process.env.VITEST &&
+      nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
-    tanstackStart(),
+    !process.env.VITEST && tanstackStart(),
     viteReact()
   ]
 })
