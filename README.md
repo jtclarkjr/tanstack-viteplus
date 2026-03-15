@@ -16,7 +16,8 @@ the primary interface for install, dev, build, lint, format, and test workflows;
 package scripts are mainly for project-specific cases such as Docker
 entrypoints.
 
-- TanStack Start with file-based routing
+- TanStack Start with file-based routing (see
+  [docs/ROUTING.md](docs/ROUTING.md))
 - React Query for client-side reads and writes
 - Zod as the shared runtime contract for request and response payloads
 - Tailwind CSS v4 + shadcn/ui for the UI layer
