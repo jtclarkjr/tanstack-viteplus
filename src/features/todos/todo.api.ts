@@ -4,6 +4,7 @@ import {
   createTodoInputSchema,
   createTodoResponseSchema,
   deleteTodoResponseSchema,
+  getTodoResponseSchema,
   listTodosResponseSchema,
   updateTodoInputSchema,
   updateTodoResponseSchema,
@@ -11,6 +12,7 @@ import {
   type CreateTodoInput,
   type CreateTodoResponse,
   type DeleteTodoResponse,
+  type GetTodoResponse,
   type ListTodosResponse,
   type UpdateTodoInput,
   type UpdateTodoResponse
@@ -59,6 +61,20 @@ async function parseResponse<T>(
   }
 
   return parse(payload)
+}
+
+export async function getTodo(id: string): Promise<GetTodoResponse> {
+  const response = await fetch(`/api/todos/${id}`, {
+    headers: {
+      accept: 'application/json'
+    }
+  })
+
+  return parseResponse(
+    response,
+    (payload) => getTodoResponseSchema.parse(payload),
+    'Failed to load the todo.'
+  )
 }
 
 export async function listTodos(): Promise<ListTodosResponse> {

@@ -39,12 +39,10 @@ const config = defineConfig({
       'build',
       '.storybook',
       '.storybook/**',
-      '**/*.stories.ts',
-      '**/*.stories.tsx',
       'storybook-static',
       'storybook-static/**',
-      'public/storybook',
-      'public/storybook/**'
+      'public/**',
+      'src/routeTree.gen.ts'
     ],
     options: { typeAware: true, typeCheck: true }
   },

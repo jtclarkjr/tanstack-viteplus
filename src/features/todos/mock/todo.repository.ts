@@ -27,6 +27,10 @@ let todos: Todo[] = [
   }
 ]
 
+export function getTodo(id: string): Todo | null {
+  return todos.find((todo) => todo.id === id) ?? null
+}
+
 export function listTodos(): Todo[] {
   return todos.toSorted((left, right) =>
     right.createdAt.localeCompare(left.createdAt)

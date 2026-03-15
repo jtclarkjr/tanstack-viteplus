@@ -1,4 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  RouterProvider,
+  createMemoryHistory,
+  createRootRoute,
+  createRoute,
+  createRouter
+} from '@tanstack/react-router'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ThemeProvider } from '@/providers/theme-provider'
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
@@ -23,13 +30,35 @@ function createTestQueryClient() {
   })
 }
 
+function createTestRouter() {
+  const rootRoute = createRootRoute()
+  const indexRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/',
+    component: TodosPage
+  })
+  const todoDetailRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: '/todos/$todoId',
+    component: () => null
+  })
+
+  rootRoute.addChildren([indexRoute, todoDetailRoute])
+
+  return createRouter({
+    routeTree: rootRoute,
+    history: createMemoryHistory({ initialEntries: ['/'] })
+  })
+}
+
 function renderPage() {
   const queryClient = createTestQueryClient()
+  const router = createTestRouter()
 
   render(
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
-        <TodosPage />
+        <RouterProvider router={router} />
       </QueryClientProvider>
     </ThemeProvider>
   )

@@ -7,12 +7,20 @@ import {
 import {
   createTodo,
   deleteTodo,
+  getTodo,
   listTodos,
   updateTodo
 } from '@/features/todos/todo.api'
 import type { UpdateTodoInput } from '@/features/todos/todo.schema'
 
 export const todosQueryKey = ['todos']
+
+export function todoQueryOptions(id: string) {
+  return queryOptions({
+    queryKey: [...todosQueryKey, id],
+    queryFn: () => getTodo(id)
+  })
+}
 
 export function todosQueryOptions() {
   return queryOptions({

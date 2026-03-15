@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
 import {
   AlertCircle,
@@ -119,7 +120,13 @@ export function TodoItem({ todo }: { todo: Todo }) {
         </div>
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="font-medium">{todo.title}</p>
+            <Link
+              to="/todos/$todoId"
+              params={{ todoId: todo.id }}
+              className="font-medium hover:underline"
+            >
+              {todo.title}
+            </Link>
             <Badge
               variant={todo.completed ? 'secondary' : 'outline'}
               className="rounded-full"

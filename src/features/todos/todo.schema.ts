@@ -31,6 +31,10 @@ export const listTodosResponseSchema = z.object({
   items: z.array(todoSchema)
 })
 
+export const getTodoResponseSchema = z.object({
+  item: todoSchema
+})
+
 export const createTodoResponseSchema = z.object({
   item: todoSchema
 })
@@ -51,6 +55,7 @@ export const apiErrorSchema = z.object({
 export type CreateTodoInput = z.infer<typeof createTodoInputSchema>
 export type UpdateTodoInput = z.infer<typeof updateTodoInputSchema>
 export type Todo = z.infer<typeof todoSchema>
+export type GetTodoResponse = z.infer<typeof getTodoResponseSchema>
 export type ListTodosResponse = z.infer<typeof listTodosResponseSchema>
 export type CreateTodoResponse = z.infer<typeof createTodoResponseSchema>
 export type UpdateTodoResponse = z.infer<typeof updateTodoResponseSchema>
