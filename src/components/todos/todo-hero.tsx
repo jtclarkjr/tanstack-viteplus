@@ -21,7 +21,7 @@ export const TodoHero = () => {
               variant="outline"
               className="rounded-full bg-background/70 px-3 py-1"
             >
-              TanStack Start + VitePlus
+              TanStack Start Vite+
             </Badge>
             <Badge variant="secondary" className="rounded-full px-3 py-1">
               shadcn/ui
