@@ -23,6 +23,8 @@ entrypoints.
 - React Query for client-side reads and writes
 - Zod as the shared runtime contract for request and response payloads
 - Tailwind CSS v4 + shadcn/ui for the UI layer
+- tsgo (`@typescript/native-preview`) for type checking instead of `tsc` — run
+  with `vp exec tsgo`
 - pnpm as the package manager of record (Only npm, pnpm, and yarn are compatible
   with Vite+)
 - Vite+ as the day-to-day workflow wrapper (Required and can be installed from
