@@ -18,6 +18,7 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  notFoundComponent: () => <p>Page not found</p>,
   head: () => ({
     meta: [
       {
