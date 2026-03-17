@@ -46,6 +46,11 @@ const config = defineConfig({
     ],
     options: { typeAware: true, typeCheck: true }
   },
+  server: {
+    watch: {
+      ignored: ['**/routeTree.gen.ts']
+    }
+  },
   resolve: {
     tsconfigPaths: true
   },
