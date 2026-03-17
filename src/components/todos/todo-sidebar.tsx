@@ -53,7 +53,7 @@ export const TodoSidebar = () => {
         <CardContent className="space-y-3 text-sm text-muted-foreground">
           <div className="rounded-xl border border-border/70 bg-background/70 p-3">
             <p className="font-medium text-foreground">
-              pnpm + VitePlus workflow
+              pnpm Vite+ workflow
             </p>
             <p>
               Use <code>vp dev</code>, <code>vp check</code>, and{' '}
