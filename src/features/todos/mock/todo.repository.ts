@@ -27,17 +27,17 @@ let todos: Todo[] = [
   }
 ]
 
-export function getTodo(id: string): Todo | null {
+export const getTodo = (id: string): Todo | null => {
   return todos.find((todo) => todo.id === id) ?? null
 }
 
-export function listTodos(): Todo[] {
+export const listTodos = (): Todo[] => {
   return todos.toSorted((left, right) =>
     right.createdAt.localeCompare(left.createdAt)
   )
 }
 
-export function createTodo(input: CreateTodoInput): Todo {
+export const createTodo = (input: CreateTodoInput): Todo => {
   const todo: Todo = {
     id: `todo-${crypto.randomUUID()}`,
     title: input.title,
@@ -50,7 +50,7 @@ export function createTodo(input: CreateTodoInput): Todo {
   return todo
 }
 
-export function updateTodo(id: string, input: UpdateTodoInput): Todo | null {
+export const updateTodo = (id: string, input: UpdateTodoInput): Todo | null => {
   const index = todos.findIndex((todo) => todo.id === id)
 
   if (index === -1) {
@@ -68,7 +68,7 @@ export function updateTodo(id: string, input: UpdateTodoInput): Todo | null {
   return updated
 }
 
-export function deleteTodo(id: string): Todo | null {
+export const deleteTodo = (id: string): Todo | null => {
   const existing = todos.find((todo) => todo.id === id)
 
   if (!existing) {

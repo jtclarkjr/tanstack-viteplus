@@ -25,12 +25,12 @@ export const consoleErrorLogger: ErrorLogger = {
   }
 }
 
-export function logServerError(params: {
+export const logServerError = (params: {
   error: AppError
   request: Request
   unexpected: boolean
   logger?: ErrorLogger
-}) {
+}) => {
   const { error, request, unexpected, logger = consoleErrorLogger } = params
   const url = new URL(request.url)
   const cause = (error as Error & { cause?: unknown }).cause

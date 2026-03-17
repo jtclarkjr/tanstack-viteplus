@@ -8,7 +8,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 
-export function TodoHero() {
+export const TodoHero = () => {
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-card/80 shadow-sm backdrop-blur">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />

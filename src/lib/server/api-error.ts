@@ -39,10 +39,10 @@ export class AppError extends Error {
   }
 }
 
-export function badRequest(
+export const badRequest = (
   message: string,
   options: Omit<Partial<AppErrorOptions>, 'status' | 'message'> = {}
-) {
+) => {
   return new AppError({
     status: 400,
     message,
@@ -50,11 +50,11 @@ export function badRequest(
   })
 }
 
-export function validationError(
+export const validationError = (
   message: string,
   issues?: ApiErrorIssues,
   options: Omit<Partial<AppErrorOptions>, 'status' | 'message' | 'issues'> = {}
-) {
+) => {
   return new AppError({
     status: 400,
     message,
@@ -63,10 +63,10 @@ export function validationError(
   })
 }
 
-export function notFound(
+export const notFound = (
   message: string,
   options: Omit<Partial<AppErrorOptions>, 'status' | 'message'> = {}
-) {
+) => {
   return new AppError({
     status: 404,
     message,
@@ -74,10 +74,10 @@ export function notFound(
   })
 }
 
-export function internalServerError(
+export const internalServerError = (
   message = 'Something went wrong on the server.',
   options: Omit<Partial<AppErrorOptions>, 'status' | 'message'> = {}
-) {
+) => {
   return new AppError({
     status: 500,
     message,
@@ -85,16 +85,16 @@ export function internalServerError(
   })
 }
 
-export function serializeApiError(error: AppError) {
+export const serializeApiError = (error: AppError) => {
   return {
     message: error.message,
     ...(error.issues ? { issues: error.issues } : null)
   }
 }
 
-export function buildValidationIssues(
+export const buildValidationIssues = (
   fieldErrors: Record<string, string[] | undefined>
-) {
+) => {
   return Object.fromEntries(
     Object.entries(fieldErrors).filter((entry): entry is [string, string[]] =>
       Boolean(entry[1]?.length)
@@ -102,7 +102,7 @@ export function buildValidationIssues(
   )
 }
 
-export async function parseJsonBody(request: Request): Promise<unknown> {
+export const parseJsonBody = async (request: Request): Promise<unknown> => {
   try {
     return await request.json()
   } catch (error) {
@@ -113,11 +113,11 @@ export async function parseJsonBody(request: Request): Promise<unknown> {
   }
 }
 
-export function parseInput<TSchema extends ZodType>(
+export const parseInput = <TSchema extends ZodType>(
   schema: TSchema,
   payload: unknown,
   message = 'Request body failed validation.'
-) {
+) => {
   const parsed = schema.safeParse(payload)
 
   if (!parsed.success) {
@@ -134,10 +134,12 @@ export function parseInput<TSchema extends ZodType>(
   return parsed.data
 }
 
-export function normalizeError(error: unknown): {
+export const normalizeError = (
+  error: unknown
+): {
   error: AppError
   unexpected: boolean
-} {
+} => {
   if (error instanceof AppError) {
     return { error, unexpected: false }
   }
@@ -151,13 +153,13 @@ export function normalizeError(error: unknown): {
   }
 }
 
-export function handleApiError(
+export const handleApiError = (
   error: unknown,
   request: Request,
   options?: {
     logger?: ErrorLogger
   }
-) {
+) => {
   const normalized = normalizeError(error)
 
   logServerError({

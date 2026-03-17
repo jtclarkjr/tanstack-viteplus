@@ -17,37 +17,7 @@ interface MyRouterContext {
   queryClient: QueryClient
 }
 
-export const Route = createRootRouteWithContext<MyRouterContext>()({
-  notFoundComponent: () => <p>Page not found</p>,
-  head: () => ({
-    meta: [
-      {
-        charSet: 'utf-8'
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1'
-      },
-      {
-        title: 'TanStack Start + VitePlus Boilerplate'
-      },
-      {
-        name: 'description',
-        content:
-          'A TanStack Start starter wired with React Query, shared Zod API schemas, and a pnpm-first VitePlus workflow.'
-      }
-    ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss
-      }
-    ]
-  }),
-  shellComponent: RootDocument
-})
-
-function RootDocument({ children }: { children: React.ReactNode }) {
+const RootDocument = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -77,3 +47,33 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     </html>
   )
 }
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
+  notFoundComponent: () => <p>Page not found</p>,
+  head: () => ({
+    meta: [
+      {
+        charSet: 'utf-8'
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1'
+      },
+      {
+        title: 'TanStack Start + VitePlus Boilerplate'
+      },
+      {
+        name: 'description',
+        content:
+          'A TanStack Start starter wired with React Query, shared Zod API schemas, and a pnpm-first VitePlus workflow.'
+      }
+    ],
+    links: [
+      {
+        rel: 'stylesheet',
+        href: appCss
+      }
+    ]
+  }),
+  shellComponent: RootDocument
+})

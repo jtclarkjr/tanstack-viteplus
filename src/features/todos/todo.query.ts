@@ -15,25 +15,25 @@ import type { UpdateTodoInput } from '@/features/todos/todo.schema'
 
 export const todosQueryKey = ['todos']
 
-export function todoQueryOptions(id: string) {
+export const todoQueryOptions = (id: string) => {
   return queryOptions({
     queryKey: [...todosQueryKey, id],
     queryFn: () => getTodo(id)
   })
 }
 
-export function todosQueryOptions() {
+export const todosQueryOptions = () => {
   return queryOptions({
     queryKey: todosQueryKey,
     queryFn: listTodos
   })
 }
 
-export function useTodosQuery() {
+export const useTodosQuery = () => {
   return useQuery(todosQueryOptions())
 }
 
-export function useCreateTodoMutation() {
+export const useCreateTodoMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -44,7 +44,7 @@ export function useCreateTodoMutation() {
   })
 }
 
-export function useUpdateTodoMutation() {
+export const useUpdateTodoMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -56,7 +56,7 @@ export function useUpdateTodoMutation() {
   })
 }
 
-export function useDeleteTodoMutation() {
+export const useDeleteTodoMutation = () => {
   const queryClient = useQueryClient()
 
   return useMutation({

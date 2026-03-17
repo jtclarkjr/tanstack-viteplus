@@ -20,7 +20,7 @@ const ThemeContext = createContext<
   | undefined
 >(undefined)
 
-function applyTheme(theme: Theme) {
+const applyTheme = (theme: Theme) => {
   const root = document.documentElement
   const resolved =
     theme === 'system'
@@ -46,7 +46,7 @@ export const themeInitScript = `
 })();
 `
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const [theme, setThemeState] = useState<Theme>('system')
   const [mounted, setMounted] = useState<boolean>(false)
 
@@ -92,7 +92,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
 }
 
-export function useTheme() {
+export const useTheme = () => {
   const context = useContext(ThemeContext)
 
   if (!context) {

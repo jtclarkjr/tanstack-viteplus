@@ -11,20 +11,14 @@ import {
   CardTitle
 } from '@/components/ui/card'
 
-export const Route = createFileRoute('/todos/$todoId')({
-  loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(todoQueryOptions(params.todoId)),
-  component: TodoDetailPage
-})
-
-function formatCreatedAt(value: string) {
+const formatCreatedAt = (value: string) => {
   return new Intl.DateTimeFormat('en', {
     dateStyle: 'medium',
     timeStyle: 'short'
   }).format(new Date(value))
 }
 
-function TodoDetailPage() {
+const TodoDetailPage = () => {
   const { item: todo } = Route.useLoaderData()
 
   return (
@@ -62,3 +56,9 @@ function TodoDetailPage() {
     </div>
   )
 }
+
+export const Route = createFileRoute('/todos/$todoId')({
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(todoQueryOptions(params.todoId)),
+  component: TodoDetailPage
+})

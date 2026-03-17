@@ -12,7 +12,7 @@ import {
 import { TodoAddForm } from '@/components/todos/todo-add-form'
 import { TodoItem } from '@/components/todos/todo-item'
 
-export function TodoList() {
+export const TodoList = () => {
   const todosQuery = useTodosQuery()
   const items = todosQuery.data?.items ?? []
 

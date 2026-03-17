@@ -30,11 +30,11 @@ export class ApiClientError extends Error {
   }
 }
 
-async function parseResponse<T>(
+const parseResponse = async <T>(
   response: Response,
   parse: (payload: unknown) => T,
   fallbackMessage: string
-): Promise<T> {
+): Promise<T> => {
   let payload: unknown = null
 
   try {
@@ -63,7 +63,7 @@ async function parseResponse<T>(
   return parse(payload)
 }
 
-export async function getTodo(id: string): Promise<GetTodoResponse> {
+export const getTodo = async (id: string): Promise<GetTodoResponse> => {
   const response = await fetch(`/api/todos/${id}`, {
     headers: {
       accept: 'application/json'
@@ -77,7 +77,7 @@ export async function getTodo(id: string): Promise<GetTodoResponse> {
   )
 }
 
-export async function listTodos(): Promise<ListTodosResponse> {
+export const listTodos = async (): Promise<ListTodosResponse> => {
   const response = await fetch('/api/todos', {
     headers: {
       accept: 'application/json'
@@ -91,9 +91,9 @@ export async function listTodos(): Promise<ListTodosResponse> {
   )
 }
 
-export async function createTodo(
+export const createTodo = async (
   input: CreateTodoInput
-): Promise<CreateTodoResponse> {
+): Promise<CreateTodoResponse> => {
   const payload = createTodoInputSchema.parse(input)
 
   const response = await fetch('/api/todos', {
@@ -112,10 +112,10 @@ export async function createTodo(
   )
 }
 
-export async function updateTodo(
+export const updateTodo = async (
   id: string,
   input: UpdateTodoInput
-): Promise<UpdateTodoResponse> {
+): Promise<UpdateTodoResponse> => {
   const payload = updateTodoInputSchema.parse(input)
 
   const response = await fetch(`/api/todos/${id}`, {
@@ -134,7 +134,7 @@ export async function updateTodo(
   )
 }
 
-export async function deleteTodo(id: string): Promise<DeleteTodoResponse> {
+export const deleteTodo = async (id: string): Promise<DeleteTodoResponse> => {
   const response = await fetch(`/api/todos/${id}`, {
     method: 'DELETE',
     headers: {
@@ -149,6 +149,6 @@ export async function deleteTodo(id: string): Promise<DeleteTodoResponse> {
   )
 }
 
-export function isSchemaError(error: unknown): error is ZodError {
+export const isSchemaError = (error: unknown): error is ZodError => {
   return error instanceof ZodError
 }

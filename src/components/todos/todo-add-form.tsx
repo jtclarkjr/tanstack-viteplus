@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
-export function TodoAddForm() {
+export const TodoAddForm = () => {
   const createTodoMutation = useCreateTodoMutation()
   const titleSchema = createTodoInputSchema.shape.title
   const form = useForm({
@@ -25,7 +25,7 @@ export function TodoAddForm() {
     }
   })
 
-  function getMutationIssue(error: unknown) {
+  const getMutationIssue = (error: unknown) => {
     if (error instanceof ApiClientError) {
       return error.issues?.['title']?.[0] ?? error.message
     }

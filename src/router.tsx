@@ -3,7 +3,7 @@ import { routeTree } from '@/routeTree.gen'
 
 import { getContext } from '@/providers/tanstack-query-provider'
 
-export function getRouter() {
+export const getRouter = () => {
   const router = createTanStackRouter({
     routeTree,
 

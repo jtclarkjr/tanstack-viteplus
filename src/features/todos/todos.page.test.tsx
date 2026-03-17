@@ -15,7 +15,7 @@ const fetchMock = vi.fn<typeof fetch>()
 
 vi.stubGlobal('fetch', fetchMock)
 
-function createTestQueryClient() {
+const createTestQueryClient = () => {
   return new QueryClient({
     defaultOptions: {
       queries: {
@@ -30,7 +30,7 @@ function createTestQueryClient() {
   })
 }
 
-function createTestRouter() {
+const createTestRouter = () => {
   const rootRoute = createRootRoute()
   const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
@@ -51,7 +51,7 @@ function createTestRouter() {
   })
 }
 
-function renderPage() {
+const renderPage = () => {
   const queryClient = createTestQueryClient()
   const router = createTestRouter()
 

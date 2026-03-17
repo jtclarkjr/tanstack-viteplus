@@ -11,7 +11,7 @@ import {
   parseJsonBody
 } from '@/lib/server/api-error'
 
-export async function listTodosHandler({ request }: { request: Request }) {
+export const listTodosHandler = async ({ request }: { request: Request }) => {
   try {
     return Response.json(listTodosResponseSchema.parse({ items: listTodos() }))
   } catch (error) {
@@ -19,7 +19,7 @@ export async function listTodosHandler({ request }: { request: Request }) {
   }
 }
 
-export async function createTodoHandler({ request }: { request: Request }) {
+export const createTodoHandler = async ({ request }: { request: Request }) => {
   try {
     const payload = await parseJsonBody(request)
     const input = parseInput(createTodoInputSchema, payload)

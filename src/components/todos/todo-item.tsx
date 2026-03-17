@@ -22,14 +22,14 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 
-function formatCreatedAt(value: string) {
+const formatCreatedAt = (value: string) => {
   return new Intl.DateTimeFormat('en', {
     dateStyle: 'medium',
     timeStyle: 'short'
   }).format(new Date(value))
 }
 
-function validateTodoTitle(value: string) {
+const validateTodoTitle = (value: string) => {
   const parsed = createTodoInputSchema.shape.title.safeParse(value)
 
   return parsed.success
@@ -37,7 +37,7 @@ function validateTodoTitle(value: string) {
     : (parsed.error.issues[0]?.message ?? 'Invalid todo title.')
 }
 
-export function TodoItem({ todo }: { todo: Todo }) {
+export const TodoItem = ({ todo }: { todo: Todo }) => {
   const updateTodoMutation = useUpdateTodoMutation()
   const deleteTodoMutation = useDeleteTodoMutation()
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -59,7 +59,7 @@ export function TodoItem({ todo }: { todo: Todo }) {
     }
   })
 
-  function getMutationIssue(error: unknown) {
+  const getMutationIssue = (error: unknown) => {
     if (error instanceof ApiClientError) {
       return error.issues?.['title']?.[0] ?? error.message
     }
@@ -78,24 +78,24 @@ export function TodoItem({ todo }: { todo: Todo }) {
     getMutationIssue(updateTodoMutation.error) ??
     getMutationIssue(deleteTodoMutation.error)
 
-  function startEditing() {
+  const startEditing = () => {
     editForm.reset({ title: todo.title })
     setIsEditing(true)
   }
 
-  function cancelEditing() {
+  const cancelEditing = () => {
     setIsEditing(false)
     editForm.reset({ title: todo.title })
   }
 
-  function toggleCompleted() {
+  const toggleCompleted = () => {
     updateTodoMutation.mutate({
       id: todo.id,
       input: { completed: !todo.completed }
     })
   }
 
-  function handleDelete() {
+  const handleDelete = () => {
     deleteTodoMutation.mutate(
       { id: todo.id },
       {

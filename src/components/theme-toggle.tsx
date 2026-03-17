@@ -25,7 +25,7 @@ const options: Array<{
   }
 ]
 
-export function ThemeToggle() {
+export const ThemeToggle = () => {
   const { theme, mounted, setTheme } = useTheme()
 
   if (!mounted) {

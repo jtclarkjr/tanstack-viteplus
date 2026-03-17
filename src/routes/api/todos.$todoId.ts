@@ -24,7 +24,7 @@ type TodoRouteContext = {
   request: Request
 }
 
-export async function getTodoHandler({ params, request }: TodoRouteContext) {
+export const getTodoHandler = async ({ params, request }: TodoRouteContext) => {
   try {
     const item = getTodo(params.todoId)
 
@@ -41,7 +41,10 @@ export async function getTodoHandler({ params, request }: TodoRouteContext) {
   }
 }
 
-export async function updateTodoHandler({ params, request }: TodoRouteContext) {
+export const updateTodoHandler = async ({
+  params,
+  request
+}: TodoRouteContext) => {
   try {
     const payload = await parseJsonBody(request)
     const input = parseInput(updateTodoInputSchema, payload)
@@ -60,7 +63,10 @@ export async function updateTodoHandler({ params, request }: TodoRouteContext) {
   }
 }
 
-export async function deleteTodoHandler({ params, request }: TodoRouteContext) {
+export const deleteTodoHandler = async ({
+  params,
+  request
+}: TodoRouteContext) => {
   try {
     const item = deleteTodo(params.todoId)
 

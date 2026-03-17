@@ -7,7 +7,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 
-export function TodoSidebar() {
+export const TodoSidebar = () => {
   return (
     <div className="grid gap-6">
       <Card className="border-border/70 bg-card/85 shadow-sm">

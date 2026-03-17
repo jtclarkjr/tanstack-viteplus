@@ -7,7 +7,7 @@ let context:
     }
   | undefined
 
-function makeQueryClient() {
+const makeQueryClient = () => {
   return new QueryClient({
     defaultOptions: {
       queries: {
@@ -19,7 +19,7 @@ function makeQueryClient() {
   })
 }
 
-export function getContext() {
+export const getContext = () => {
   if (context) {
     return context
   }
@@ -33,14 +33,12 @@ export function getContext() {
   return context
 }
 
-export default function TanStackQueryProvider({
-  children
-}: {
-  children: ReactNode
-}) {
+const TanStackQueryProvider = ({ children }: { children: ReactNode }) => {
   const { queryClient } = getContext()
 
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   )
 }
+
+export default TanStackQueryProvider
