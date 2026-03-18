@@ -1,22 +1,28 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
-import * as todoRepository from '@/features/todos/todo.repository'
 import { createTodoHandler } from '@/routes/api/todos'
 import {
   deleteTodoHandler,
   updateTodoHandler
 } from '@/routes/api/todos.$todoId'
 
-vi.mock('@/features/todos/todo.repository', () => ({
-  getTodo: vi.fn(async () => null),
-  listTodos: vi.fn(async () => []),
-  createTodo: vi.fn(async () => ({
-    id: 'test-id',
-    title: 'test',
-    completed: false,
-    createdAt: new Date().toISOString()
-  })),
-  updateTodo: vi.fn(async () => null),
-  deleteTodo: vi.fn(async () => null)
+const mockReturning = vi.fn(async () => [])
+
+const chainable = () => ({
+  from: () => chainable(),
+  where: () => chainable(),
+  orderBy: () => Promise.resolve([]),
+  returning: mockReturning
+})
+
+vi.mock('@/lib/server/db', () => ({
+  db: {
+    select: () => chainable(),
+    insert: () => ({ values: () => ({ returning: mockReturning }) }),
+    update: () => ({
+      set: () => ({ where: () => ({ returning: mockReturning }) })
+    }),
+    delete: () => ({ where: () => ({ returning: mockReturning }) })
+  }
 }))
 
 describe('todo api route handlers', () => {
@@ -97,8 +103,8 @@ describe('todo api route handlers', () => {
     expect(response.status).toBe(404)
   })
 
-  it('returns a generic 500 when the repository throws unexpectedly', async () => {
-    vi.spyOn(todoRepository, 'createTodo').mockImplementation(() => {
+  it('returns a generic 500 when the database throws unexpectedly', async () => {
+    mockReturning.mockImplementationOnce(() => {
       throw new Error('storage unavailable')
     })
 
