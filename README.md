@@ -107,6 +107,21 @@ vp run db:generate
 vp run db:migrate
 ```
 
+### Supabase alternative
+
+The **`supabase`** branch replaces Drizzle ORM and BetterAuth with
+`@supabase/supabase-js` for both database access and authentication. If you
+prefer a single Supabase client over a separate ORM and auth library, check out
+that branch:
+
+```bash
+git checkout supabase
+vp install
+```
+
+See [docs/LOCAL_SUPABASE_SETUP.md](docs/LOCAL_SUPABASE_SETUP.md) for local
+Supabase setup instructions.
+
 ## Agent files
 
 Generate or refresh the agent instruction files for this repo with:
