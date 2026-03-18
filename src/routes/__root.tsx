@@ -9,12 +9,18 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { ThemeProvider, themeInitScript } from '@/providers/theme-provider'
 import TanStackQueryProvider from '@/providers/tanstack-query-provider'
 import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
+import { AuthStatus } from '@/features/auth/auth-status'
+import { getAuthConfig } from '@/lib/server/auth-config'
+import { getServerSession } from '@/lib/server/get-session'
 import appCss from '@/styles.css?url'
 
+import type { AuthConfig } from '@/lib/server/auth-config'
 import type { QueryClient } from '@tanstack/react-query'
 
 interface MyRouterContext {
   queryClient: QueryClient
+  session: { user: { id: string }; session: { id: string } } | null
+  authConfig: AuthConfig | null
 }
 
 const RootDocument = ({ children }: { children: React.ReactNode }) => {
@@ -27,6 +33,9 @@ const RootDocument = ({ children }: { children: React.ReactNode }) => {
       <body>
         <ThemeProvider>
           <TanStackQueryProvider>
+            <div className="fixed top-4 right-4 z-50">
+              <AuthStatus />
+            </div>
             {children}
             <TanStackDevtools
               config={{
@@ -49,6 +58,13 @@ const RootDocument = ({ children }: { children: React.ReactNode }) => {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  beforeLoad: async () => {
+    const [session, authConfig] = await Promise.all([
+      getServerSession(),
+      getAuthConfig()
+    ])
+    return { session, authConfig }
+  },
   notFoundComponent: () => <p>Page not found</p>,
   head: () => ({
     meta: [

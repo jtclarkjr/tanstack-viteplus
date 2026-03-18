@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { ApiClientError, isSchemaError } from '@/features/todos/todo.api'
 import { useCreateTodoMutation } from '@/features/todos/todo.query'
 import { createTodoInputSchema } from '@/features/todos/todo.schema'
+import { extractFieldError } from '@/lib/form-utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -63,13 +64,7 @@ export const TodoAddForm = () => {
           }}
         >
           {(field) => {
-            const rawError = field.state.meta.errors[0]
-            const fieldError =
-              typeof rawError === 'object' &&
-              rawError !== null &&
-              'message' in rawError
-                ? rawError.message
-                : rawError
+            const fieldError = extractFieldError(field.state.meta.errors)
             const shouldShowFieldError =
               Boolean(fieldError) &&
               (field.state.meta.isTouched || form.state.submissionAttempts > 0)
@@ -126,9 +121,7 @@ export const TodoAddForm = () => {
                   <Alert className="sm:col-span-2" variant="destructive">
                     <AlertCircle className="size-4" />
                     <AlertTitle>Input failed validation</AlertTitle>
-                    <AlertDescription>
-                      {z.string().catch('').parse(fieldError)}
-                    </AlertDescription>
+                    <AlertDescription>{fieldError}</AlertDescription>
                   </Alert>
                 ) : null}
               </>

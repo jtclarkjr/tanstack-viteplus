@@ -12,3 +12,5 @@ dist-ssr
 __unconfig*
 storybook-static
 todos.json
+local.db
+*.db-journal
