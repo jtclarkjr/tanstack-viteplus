@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { LogOut, UserCircle } from 'lucide-react'
 
+import { z } from 'zod'
+
 import { useSession, signOut } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { LoginModal } from '@/features/auth/login-modal'
@@ -37,18 +39,19 @@ export const AuthStatus = () => {
     )
   }
 
+  const optionalString = z.string().optional().catch(undefined)
+  const name = optionalString.parse(user?.user_metadata?.name)
+  const image = optionalString.parse(user?.user_metadata?.avatar_url)
   const initial =
-    user?.name?.charAt(0).toUpperCase() ??
-    user?.email?.charAt(0).toUpperCase() ??
-    '?'
+    name?.charAt(0).toUpperCase() ?? user?.email?.charAt(0).toUpperCase() ?? '?'
 
   return (
     <div className="flex items-center gap-2">
       <div className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-        {user?.image ? (
+        {image ? (
           <img
-            src={user.image}
-            alt={user.name ?? 'Avatar'}
+            src={image}
+            alt={name ?? 'Avatar'}
             className="size-8 rounded-full"
           />
         ) : (

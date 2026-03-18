@@ -11,13 +11,13 @@ export type AuthConfig = {
 
 export const getAuthConfig = createServerFn({ method: 'GET' }).handler(
   (): AuthConfig => {
-    const hasSecret = !!process.env.BETTER_AUTH_SECRET
-    const hasDb = !!process.env.DATABASE_URL
+    const hasUrl = !!process.env.SUPABASE_URL
+    const hasPublishableKey = !!process.env.VITE_SUPABASE_PUBLISHABLE_KEY
 
     return {
-      configured: hasSecret && hasDb,
+      configured: hasUrl && hasPublishableKey,
       providers: {
-        email: hasSecret && hasDb,
+        email: hasUrl && hasPublishableKey,
         github:
           !!process.env.GITHUB_CLIENT_ID && !!process.env.GITHUB_CLIENT_SECRET,
         google:

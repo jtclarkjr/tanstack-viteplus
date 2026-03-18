@@ -14,37 +14,31 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TodosTodoIdRouteImport } from './routes/todos.$todoId'
 import { Route as ApiTodosRouteImport } from './routes/api/todos'
 import { Route as ApiTodosTodoIdRouteImport } from './routes/api/todos.$todoId'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 const TodosTodoIdRoute = TodosTodoIdRouteImport.update({
   id: '/todos/$todoId',
   path: '/todos/$todoId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 const ApiTodosRoute = ApiTodosRouteImport.update({
   id: '/api/todos',
   path: '/api/todos',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 const ApiTodosTodoIdRoute = ApiTodosTodoIdRouteImport.update({
   id: '/$todoId',
   path: '/$todoId',
-  getParentRoute: () => ApiTodosRoute,
-} as any)
-const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ApiTodosRoute
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -52,7 +46,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/api/todos': typeof ApiTodosRouteWithChildren
   '/todos/$todoId': typeof TodosTodoIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/todos/$todoId': typeof ApiTodosTodoIdRoute
 }
 export interface FileRoutesByTo {
@@ -60,7 +53,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/api/todos': typeof ApiTodosRouteWithChildren
   '/todos/$todoId': typeof TodosTodoIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/todos/$todoId': typeof ApiTodosTodoIdRoute
 }
 export interface FileRoutesById {
@@ -69,7 +61,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/api/todos': typeof ApiTodosRouteWithChildren
   '/todos/$todoId': typeof TodosTodoIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/todos/$todoId': typeof ApiTodosTodoIdRoute
 }
 export interface FileRouteTypes {
@@ -79,23 +70,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/api/todos'
     | '/todos/$todoId'
-    | '/api/auth/$'
     | '/api/todos/$todoId'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/login'
-    | '/api/todos'
-    | '/todos/$todoId'
-    | '/api/auth/$'
-    | '/api/todos/$todoId'
+  to: '/' | '/login' | '/api/todos' | '/todos/$todoId' | '/api/todos/$todoId'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/api/todos'
     | '/todos/$todoId'
-    | '/api/auth/$'
     | '/api/todos/$todoId'
   fileRoutesById: FileRoutesById
 }
@@ -104,7 +87,6 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ApiTodosRoute: typeof ApiTodosRouteWithChildren
   TodosTodoIdRoute: typeof TodosTodoIdRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -144,13 +126,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTodosTodoIdRouteImport
       parentRoute: typeof ApiTodosRoute
     }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -159,19 +134,18 @@ interface ApiTodosRouteChildren {
 }
 
 const ApiTodosRouteChildren: ApiTodosRouteChildren = {
-  ApiTodosTodoIdRoute: ApiTodosTodoIdRoute,
+  ApiTodosTodoIdRoute: ApiTodosTodoIdRoute
 }
 
 const ApiTodosRouteWithChildren = ApiTodosRoute._addFileChildren(
-  ApiTodosRouteChildren,
+  ApiTodosRouteChildren
 )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   ApiTodosRoute: ApiTodosRouteWithChildren,
-  TodosTodoIdRoute: TodosTodoIdRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
+  TodosTodoIdRoute: TodosTodoIdRoute
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -4,7 +4,11 @@ import { useRouter } from '@tanstack/react-router'
 import { AlertCircle, Github, Info, Loader2 } from 'lucide-react'
 import { z } from 'zod'
 
-import { signIn, signUp } from '@/lib/auth-client'
+import {
+  signInWithEmail,
+  signUpWithEmail,
+  signInWithOAuth
+} from '@/lib/auth-client'
 import { extractFieldError } from '@/lib/form-utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -47,19 +51,22 @@ const NotConfiguredCard = () => {
             </p>
             <ol className="mt-2 list-inside list-decimal space-y-1 text-xs">
               <li>
-                Set <code>DATABASE_URL</code> to your Postgres connection string
+                Set <code>SUPABASE_URL</code> and{' '}
+                <code>SUPABASE_SECRET_KEY</code> in your <code>.env</code>
               </li>
               <li>
-                Set <code>BETTER_AUTH_SECRET</code> to a random secret
+                Set <code>VITE_SUPABASE_URL</code> and{' '}
+                <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> for the browser
+                client
               </li>
               <li>
-                Run <code>vp run db:push</code> (or{' '}
-                <code>pnpm run db:push</code>) to create tables
+                Create a <code>todo</code> table in the Supabase dashboard
               </li>
               <li>Restart the dev server</li>
             </ol>
             <p className="mt-2 text-xs">
-              Optionally add <code>GITHUB_CLIENT_ID</code>/
+              Optionally configure GitHub or Google OAuth providers in the
+              Supabase dashboard and add <code>GITHUB_CLIENT_ID</code>/
               <code>GITHUB_CLIENT_SECRET</code> or <code>GOOGLE_CLIENT_ID</code>
               /<code>GOOGLE_CLIENT_SECRET</code> for SSO.
             </p>
@@ -75,7 +82,7 @@ const SsoButtons = ({ providers }: { providers: AuthConfig['providers'] }) => {
   if (!hasAny) return null
 
   const handleSso = async (provider: 'github' | 'google') => {
-    await signIn.social({ provider, callbackURL: '/' })
+    await signInWithOAuth(provider)
   }
 
   return (
@@ -145,10 +152,7 @@ const SignInForm = ({
     defaultValues: { email: '', password: '' },
     onSubmit: async ({ value }) => {
       setServerError(null)
-      const result = await signIn.email({
-        email: value.email,
-        password: value.password
-      })
+      const result = await signInWithEmail(value.email, value.password)
       if (result.error) {
         setServerError(result.error.message ?? 'Sign in failed')
         return
@@ -256,11 +260,11 @@ const SignUpForm = ({
     defaultValues: { name: '', email: '', password: '' },
     onSubmit: async ({ value }) => {
       setServerError(null)
-      const result = await signUp.email({
-        email: value.email,
-        password: value.password,
-        name: value.name || value.email.split('@')[0]
-      })
+      const result = await signUpWithEmail(
+        value.email,
+        value.password,
+        value.name || value.email.split('@')[0]
+      )
       if (result.error) {
         setServerError(result.error.message ?? 'Sign up failed')
         return
