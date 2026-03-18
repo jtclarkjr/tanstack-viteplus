@@ -83,28 +83,23 @@ vp dev
 vp build
 ```
 
-## Database setup
+## Database setup (Supabase)
 
-The app requires a running Postgres instance. Start one with Docker Compose:
+This branch uses `@supabase/supabase-js` for both database and authentication
+instead of Drizzle ORM and BetterAuth. See
+[docs/LOCAL_SUPABASE_SETUP.md](docs/LOCAL_SUPABASE_SETUP.md) for a full local
+setup guide.
 
-```bash
-docker compose up postgres -d
-```
+Quick start:
 
-Copy `.env.example` to `.env` (the default `DATABASE_URL` matches the Compose
-credentials). Then push the schema and seed data:
+1. Copy `.env.example` to `.env` and fill in your Supabase keys
+2. Create the `todo` table in the Supabase dashboard (see the setup guide for
+   the SQL)
+3. Optionally seed sample data:
 
 ```bash
 cp .env.example .env
-vp run db:push
 vp run db:seed
-```
-
-To generate migration files instead of pushing directly:
-
-```bash
-vp run db:generate
-vp run db:migrate
 ```
 
 ## Agent files
