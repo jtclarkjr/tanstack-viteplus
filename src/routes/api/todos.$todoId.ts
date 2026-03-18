@@ -3,7 +3,7 @@ import {
   deleteTodo,
   getTodo,
   updateTodo
-} from '@/features/todos/mock/todo.repository'
+} from '@/features/todos/todo.repository'
 import {
   deleteTodoResponseSchema,
   getTodoResponseSchema,
@@ -26,7 +26,7 @@ type TodoRouteContext = {
 
 export const getTodoHandler = async ({ params, request }: TodoRouteContext) => {
   try {
-    const item = getTodo(params.todoId)
+    const item = await getTodo(params.todoId)
 
     if (!item) {
       throw notFound('Todo not found.', {
@@ -48,7 +48,7 @@ export const updateTodoHandler = async ({
   try {
     const payload = await parseJsonBody(request)
     const input = parseInput(updateTodoInputSchema, payload)
-    const item = updateTodo(params.todoId, input)
+    const item = await updateTodo(params.todoId, input)
 
     if (!item) {
       throw notFound('Todo not found.', {
@@ -68,7 +68,7 @@ export const deleteTodoHandler = async ({
   request
 }: TodoRouteContext) => {
   try {
-    const item = deleteTodo(params.todoId)
+    const item = await deleteTodo(params.todoId)
 
     if (!item) {
       throw notFound('Todo not found.', {

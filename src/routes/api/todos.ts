@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { createTodo, listTodos } from '@/features/todos/mock/todo.repository'
+import { createTodo, listTodos } from '@/features/todos/todo.repository'
 import {
   createTodoInputSchema,
   createTodoResponseSchema,
@@ -13,7 +13,9 @@ import {
 
 export const listTodosHandler = async ({ request }: { request: Request }) => {
   try {
-    return Response.json(listTodosResponseSchema.parse({ items: listTodos() }))
+    return Response.json(
+      listTodosResponseSchema.parse({ items: await listTodos() })
+    )
   } catch (error) {
     return handleApiError(error, request)
   }
@@ -23,7 +25,7 @@ export const createTodoHandler = async ({ request }: { request: Request }) => {
   try {
     const payload = await parseJsonBody(request)
     const input = parseInput(createTodoInputSchema, payload)
-    const item = createTodo(input)
+    const item = await createTodo(input)
 
     return Response.json(createTodoResponseSchema.parse({ item }), {
       status: 201

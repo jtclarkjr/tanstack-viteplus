@@ -1,5 +1,14 @@
 import { boolean, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 
+export const todo = pgTable('todo', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text('title').notNull(),
+  completed: boolean('completed').notNull().default(false),
+  createdAt: timestamp('created_at').notNull().defaultNow()
+})
+
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),

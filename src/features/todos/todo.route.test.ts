@@ -1,10 +1,23 @@
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test'
-import * as todoRepository from '@/features/todos/mock/todo.repository'
+import * as todoRepository from '@/features/todos/todo.repository'
 import { createTodoHandler } from '@/routes/api/todos'
 import {
   deleteTodoHandler,
   updateTodoHandler
 } from '@/routes/api/todos.$todoId'
+
+vi.mock('@/features/todos/todo.repository', () => ({
+  getTodo: vi.fn(async () => null),
+  listTodos: vi.fn(async () => []),
+  createTodo: vi.fn(async () => ({
+    id: 'test-id',
+    title: 'test',
+    completed: false,
+    createdAt: new Date().toISOString()
+  })),
+  updateTodo: vi.fn(async () => null),
+  deleteTodo: vi.fn(async () => null)
+}))
 
 describe('todo api route handlers', () => {
   afterEach(() => {

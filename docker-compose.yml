@@ -1,4 +1,14 @@
 services:
+  postgres:
+    image: postgres:17
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
   app-dev:
     profiles: ['dev']
     build:
@@ -9,6 +19,9 @@ services:
     environment:
       HOST: 0.0.0.0
       PORT: 3000
+      DATABASE_URL: postgresql://user:password@postgres:5432/mydb
+    depends_on:
+      - postgres
     volumes:
       - .:/app
       - app_node_modules:/app/node_modules
@@ -40,8 +53,12 @@ services:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 3000
+      DATABASE_URL: postgresql://user:password@postgres:5432/mydb
+    depends_on:
+      - postgres
     command: node .output/server/index.mjs
 
 volumes:
   app_node_modules:
   app_output:
+  pgdata:

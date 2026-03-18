@@ -83,6 +83,30 @@ vp dev
 vp build
 ```
 
+## Database setup
+
+The app requires a running Postgres instance. Start one with Docker Compose:
+
+```bash
+docker compose up postgres -d
+```
+
+Copy `.env.example` to `.env` (the default `DATABASE_URL` matches the Compose
+credentials). Then push the schema and seed data:
+
+```bash
+cp .env.example .env
+vp run db:push
+vp run db:seed
+```
+
+To generate migration files instead of pushing directly:
+
+```bash
+vp run db:generate
+vp run db:migrate
+```
+
 ## Agent files
 
 Generate or refresh the agent instruction files for this repo with:
