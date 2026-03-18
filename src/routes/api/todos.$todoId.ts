@@ -1,10 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import {
-  deleteTodo,
-  getTodo,
-  updateTodo
-} from '@/features/todos/todo.repository'
-import {
   deleteTodoResponseSchema,
   getTodoResponseSchema,
   updateTodoInputSchema,
@@ -16,6 +11,19 @@ import {
   parseInput,
   parseJsonBody
 } from '@/lib/server/api-error'
+import { supabase } from '@/lib/server/supabase'
+
+const toTodo = (row: {
+  id: string
+  title: string
+  completed: boolean
+  created_at: string
+}) => ({
+  id: row.id,
+  title: row.title,
+  completed: row.completed,
+  createdAt: row.created_at
+})
 
 type TodoRouteContext = {
   params: {
@@ -26,16 +34,20 @@ type TodoRouteContext = {
 
 export const getTodoHandler = async ({ params, request }: TodoRouteContext) => {
   try {
-    const item = await getTodo(params.todoId)
+    const { data, error } = await supabase
+      .from('todo')
+      .select('*')
+      .eq('id', params.todoId)
+      .single()
 
-    if (!item) {
+    if (error || !data) {
       throw notFound('Todo not found.', {
         code: 'todo_not_found',
         details: { todoId: params.todoId }
       })
     }
 
-    return Response.json(getTodoResponseSchema.parse({ item }))
+    return Response.json(getTodoResponseSchema.parse({ item: toTodo(data) }))
   } catch (error) {
     return handleApiError(error, request)
   }
@@ -48,16 +60,22 @@ export const updateTodoHandler = async ({
   try {
     const payload = await parseJsonBody(request)
     const input = parseInput(updateTodoInputSchema, payload)
-    const item = await updateTodo(params.todoId, input)
 
-    if (!item) {
+    const { data, error } = await supabase
+      .from('todo')
+      .update(input)
+      .eq('id', params.todoId)
+      .select()
+      .single()
+
+    if (error || !data) {
       throw notFound('Todo not found.', {
         code: 'todo_not_found',
         details: { todoId: params.todoId }
       })
     }
 
-    return Response.json(updateTodoResponseSchema.parse({ item }))
+    return Response.json(updateTodoResponseSchema.parse({ item: toTodo(data) }))
   } catch (error) {
     return handleApiError(error, request)
   }
@@ -68,16 +86,21 @@ export const deleteTodoHandler = async ({
   request
 }: TodoRouteContext) => {
   try {
-    const item = await deleteTodo(params.todoId)
+    const { data, error } = await supabase
+      .from('todo')
+      .delete()
+      .eq('id', params.todoId)
+      .select()
+      .single()
 
-    if (!item) {
+    if (error || !data) {
       throw notFound('Todo not found.', {
         code: 'todo_not_found',
         details: { todoId: params.todoId }
       })
     }
 
-    return Response.json(deleteTodoResponseSchema.parse({ item }))
+    return Response.json(deleteTodoResponseSchema.parse({ item: toTodo(data) }))
   } catch (error) {
     return handleApiError(error, request)
   }
