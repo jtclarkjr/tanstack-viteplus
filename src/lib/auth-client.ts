@@ -7,7 +7,29 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? ''
 const supabasePublishableKey =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? ''
 
+// Extract the project ref from the URL for the cookie name
+const projectRef = supabaseUrl
+  ? new URL(supabaseUrl).hostname.split('.')[0]
+  : ''
+const cookieName = `sb-${projectRef}-auth-token`
+
+const syncSessionToCookie = (session: Session | null) => {
+  if (session) {
+    const value = JSON.stringify([session.access_token, session.refresh_token])
+    document.cookie = `${cookieName}=${encodeURIComponent(value)}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`
+  } else {
+    document.cookie = `${cookieName}=; path=/; max-age=0`
+  }
+}
+
 export const supabase = createClient(supabaseUrl, supabasePublishableKey)
+
+// Keep cookie in sync with auth state so server-side session reads work
+if (typeof document !== 'undefined') {
+  supabase.auth.onAuthStateChange((_event, session) => {
+    syncSessionToCookie(session)
+  })
+}
 
 export const signInWithEmail = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signInWithPassword({

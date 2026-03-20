@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
 import { LogOut, UserCircle } from 'lucide-react'
 
 import { z } from 'zod'
@@ -13,6 +14,7 @@ export const AuthStatus = () => {
   const { data: authConfig } = useQuery(authConfigQueryOptions())
   const { data: sessionData, isPending } = useSession()
   const [modalOpen, setModalOpen] = useState(false)
+  const router = useRouter()
 
   if (!authConfig?.configured || isPending) return null
 
@@ -61,7 +63,9 @@ export const AuthStatus = () => {
       <Button
         variant="ghost"
         size="icon-sm"
-        onClick={() => signOut()}
+        onClick={() => {
+          void signOut().then(() => router.invalidate())
+        }}
         aria-label="Sign out"
       >
         <LogOut className="size-4" />

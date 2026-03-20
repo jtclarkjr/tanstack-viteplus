@@ -158,7 +158,7 @@ const SignInForm = ({
         return
       }
       onSuccess?.()
-      void router.invalidate()
+      await router.invalidate()
     }
   })
 
@@ -270,7 +270,7 @@ const SignUpForm = ({
         return
       }
       onSuccess?.()
-      void router.invalidate()
+      await router.invalidate()
     }
   })
 
