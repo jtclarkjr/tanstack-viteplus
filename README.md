@@ -43,9 +43,9 @@ vp test
 Container-specific scripts:
 
 ```bash
-pnpm run dev:docker
-pnpm run storybook:docker
-pnpm run start
+vp run dev:docker
+vp run storybook:docker
+vp run start
 ```
 
 If you change `package.json`, refresh dependencies with:
@@ -156,7 +156,7 @@ container flow.
 Development with Docker Compose:
 
 ```bash
-docker compose --profile dev up --build
+vp run docker:dev
 ```
 
 That runs `vp dev` inside the container on `0.0.0.0:3000` with the repo mounted
@@ -165,7 +165,7 @@ into `/app`.
 Storybook with Docker Compose:
 
 ```bash
-docker compose --profile storybook up --build
+vp run docker:storybook
 ```
 
 That runs Storybook inside the container on `0.0.0.0:6006` with the same source
@@ -174,7 +174,7 @@ mount and dependency volume as the app dev profile.
 Production-like build and runtime:
 
 ```bash
-docker compose --profile prod up --build
+vp run docker:prod
 ```
 
 That builds the app with `vp build`, then runs the generated Nitro Node server
@@ -269,7 +269,7 @@ This starter uses shadcn/ui with the current `start` template and the generated
 Add more shadcn components with:
 
 ```bash
-pnpm dlx shadcn@latest add <component>
+vp dlx shadcn@latest add <component>
 ```
 
 ## Testing
