@@ -1,3 +1,5 @@
+# Default: builds base locally. For faster CI/CD builds, replace this stage
+# with a pre-built image from your container registry (see README).
 FROM node:24-bookworm-slim AS base
 WORKDIR /app
 ENV PNPM_HOME="/pnpm"

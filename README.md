@@ -197,6 +197,29 @@ NODE_ENV=production
 The production container does not use `vp dev` or `vp preview`; it serves the
 Nitro `node-server` output directly.
 
+### Optimizing Docker build times with a pre-built base image
+
+The `base` stage in the Dockerfile installs `curl`, enables `corepack`, and
+downloads Vite+. Locally these layers are cached, but cloud platforms without
+Docker layer caching will re-run them on every deploy.
+
+To skip this work, build the base image once using `Dockerfile.base` and push
+it to your container registry:
+
+```bash
+docker build -f Dockerfile.base -t <your-registry>/node-viteplus:latest .
+docker push <your-registry>/node-viteplus:latest
+```
+
+Then replace the entire `base` stage in the `Dockerfile` with:
+
+```dockerfile
+FROM <your-registry>/node-viteplus:latest AS base
+```
+
+Rebuild and push the base image whenever you need a newer Node.js or Vite+
+version.
+
 ## Project shape
 
 The todo feature is the reference implementation for adding new resources:
