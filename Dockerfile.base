@@ -1,0 +1,8 @@
+FROM node:24-bookworm-slim
+WORKDIR /app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="/root/.vite-plus/bin:$PNPM_HOME:$PATH"
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN corepack enable
+SHELL ["/bin/bash", "-c"]
+RUN curl -fsSL https://vite.plus | bash && vp --version
