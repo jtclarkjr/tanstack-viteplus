@@ -8,6 +8,9 @@ import viteReact from '@vitejs/plugin-react'
 import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
+  staged: {
+    '*': 'vp check --fix'
+  },
   lint: {
     plugins: ['react', 'typescript', 'unicorn'],
     categories: {
