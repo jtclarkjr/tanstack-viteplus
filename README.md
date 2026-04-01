@@ -23,14 +23,20 @@ entrypoints.
 - React Query for client-side reads and writes
 - Zod as the shared runtime contract for request and response payloads
 - Tailwind CSS v4 + shadcn/ui for the UI layer
-- tsgo (`@typescript/native-preview`) for type checking instead of `tsc` — run
-  with `vp exec tsgo`
 - pnpm as the package manager of record (Only npm, pnpm, and yarn are compatible
   with Vite+)
-- Vite+ as the day-to-day workflow wrapper (Required and can be installed from
-  [here](https://viteplus.dev))
+- Vite+ as the day-to-day workflow wrapper
 
 ## Commands
+
+Install `vp` from the [Vite+ site](https://vite.plus/) before running project
+commands:
+
+```bash
+curl -fsSL https://vite.plus | bash
+```
+
+Use Vite+ commands directly with `vp`:
 
 ```bash
 vp dev
@@ -203,8 +209,8 @@ The `base` stage in the Dockerfile installs `curl`, enables `corepack`, and
 downloads Vite+. Locally these layers are cached, but cloud platforms without
 Docker layer caching will re-run them on every deploy.
 
-To skip this work, build the base image once using `Dockerfile.base` and push
-it to your container registry:
+To skip this work, build the base image once using `Dockerfile.base` and push it
+to your container registry:
 
 ```bash
 docker build -f Dockerfile.base -t <your-registry>/node-viteplus:latest .

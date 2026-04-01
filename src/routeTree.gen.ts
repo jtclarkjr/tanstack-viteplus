@@ -19,32 +19,32 @@ import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 const TodosTodoIdRoute = TodosTodoIdRouteImport.update({
   id: '/todos/$todoId',
   path: '/todos/$todoId',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 const ApiTodosRoute = ApiTodosRouteImport.update({
   id: '/api/todos',
   path: '/api/todos',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 const ApiTodosTodoIdRoute = ApiTodosTodoIdRouteImport.update({
   id: '/$todoId',
   path: '/$todoId',
-  getParentRoute: () => ApiTodosRoute,
+  getParentRoute: () => ApiTodosRoute
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => rootRouteImport
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -159,11 +159,11 @@ interface ApiTodosRouteChildren {
 }
 
 const ApiTodosRouteChildren: ApiTodosRouteChildren = {
-  ApiTodosTodoIdRoute: ApiTodosTodoIdRoute,
+  ApiTodosTodoIdRoute: ApiTodosTodoIdRoute
 }
 
 const ApiTodosRouteWithChildren = ApiTodosRoute._addFileChildren(
-  ApiTodosRouteChildren,
+  ApiTodosRouteChildren
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -171,7 +171,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   ApiTodosRoute: ApiTodosRouteWithChildren,
   TodosTodoIdRoute: TodosTodoIdRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
