@@ -14,6 +14,7 @@
     "storybook:docker": "storybook dev -p 6006 --host 0.0.0.0",
     "build-storybook": "storybook build",
     "start": "node .output/server/index.mjs",
+    "typecheck": "vp exec tsgo --noEmit",
     "db:push": "vp exec drizzle-kit push",
     "db:generate": "vp exec drizzle-kit generate",
     "db:migrate": "vp exec drizzle-kit migrate",
