@@ -63,7 +63,7 @@ const config = defineConfig({
   plugins: [
     !process.env.VITEST && devtools(),
     !process.env.VITEST &&
-      nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+      nitro({ rolldownConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
     !process.env.VITEST && tanstackStart(),
     viteReact()
