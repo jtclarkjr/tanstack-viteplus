@@ -65,7 +65,7 @@ const config = defineConfig({
     !process.env.VITEST &&
       nitro({ rolldownConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
-    !process.env.VITEST && tanstackStart(),
+    !process.env.VITEST && tanstackStart({ spa: { enabled: true } }),
     viteReact()
   ]
 })
