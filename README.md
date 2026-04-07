@@ -23,8 +23,7 @@ entrypoints.
 - React Query for client-side reads and writes
 - Zod as the shared runtime contract for request and response payloads
 - Tailwind CSS v4 + shadcn/ui for the UI layer
-- pnpm as the package manager of record (Only npm, pnpm, and yarn are compatible
-  with Vite+)
+- Bun as the package manager of record
 - Vite+ as the day-to-day workflow wrapper
 
 ## Commands
@@ -147,7 +146,7 @@ Vite+ currently resolves `vp create @tanstack/start` through the TanStack Start
 generator package, so the working scaffold command for this repo was:
 
 ```bash
-vp create @tanstack/start -- boilerplate-tanstack-start-viteplus --package-manager pnpm --add-ons tanstack-query --no-examples --no-git -f
+vp create @tanstack/start -- boilerplate-tanstack-start-viteplus --package-manager bun --add-ons tanstack-query --no-examples --no-git -f
 ```
 
 After scaffolding, Tailwind and shadcn/ui were initialized on top of the
@@ -205,9 +204,9 @@ Nitro `node-server` output directly.
 
 ### Optimizing Docker build times with a pre-built base image
 
-The `base` stage in the Dockerfile installs `curl`, enables `corepack`, and
-downloads Vite+. Locally these layers are cached, but cloud platforms without
-Docker layer caching will re-run them on every deploy.
+The `base` stage in the Dockerfile installs `curl`, Bun, and downloads Vite+.
+Locally these layers are cached, but cloud platforms without Docker layer
+caching will re-run them on every deploy.
 
 To skip this work, build the base image once using `Dockerfile.base` and push it
 to your container registry:
