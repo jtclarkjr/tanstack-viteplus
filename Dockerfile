@@ -4,15 +4,14 @@ FROM node:24-bookworm-slim AS base
 
 WORKDIR /app
 
-ENV PNPM_HOME=/pnpm
-ENV PATH=/root/.vite-plus/bin:$PNPM_HOME:$PATH
-ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+ENV PATH=/root/.vite-plus/bin:/root/.bun/bin:$PATH
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends curl ca-certificates \
+  && apt-get install -y --no-install-recommends curl ca-certificates unzip \
   && rm -rf /var/lib/apt/lists/*
 
-RUN corepack enable
+RUN curl -fsSL https://bun.sh/install | bash \
+  && ln -s /root/.bun/bin/bun /usr/local/bin/bun
 
 SHELL ["/bin/bash", "-c"]
 
@@ -21,13 +20,13 @@ RUN curl -fsSL https://vite.plus | bash \
 
 FROM base AS deps
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json bun.lock bunfig.toml ./
 
 RUN vp install --prod --frozen-lockfile --ignore-scripts
 
 FROM base AS build
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json bun.lock bunfig.toml ./
 
 RUN vp install --frozen-lockfile --ignore-scripts
 

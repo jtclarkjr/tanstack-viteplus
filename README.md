@@ -23,8 +23,7 @@ entrypoints.
 - React Query for client-side reads and writes
 - Zod as the shared runtime contract for request and response payloads
 - Tailwind CSS v4 + shadcn/ui for the UI layer
-- pnpm as the package manager of record (Only npm, pnpm, and yarn are compatible
-  with Vite+)
+- Bun as the package manager of record through Vite+
 - Vite+ as the day-to-day workflow wrapper
 
 ## Commands
@@ -36,7 +35,8 @@ commands:
 curl -fsSL https://vite.plus | bash
 ```
 
-Use Vite+ commands directly with `vp`:
+Use Vite+ commands directly with `vp` when running on the host. For dependency
+isolation, prefer the Docker sandbox workflow below.
 
 ```bash
 vp dev
@@ -156,8 +156,14 @@ hoc CSS alone.
 
 ## Docker and Compose
 
-This repo includes both a local dev container flow and a production-like
-container flow.
+This repo includes a sandboxed local dev container flow, a Storybook container
+flow, and a production-like container flow.
+
+Prefer the Docker flow when working with untrusted or newly updated npm
+packages. The dev and Storybook services keep `node_modules` in a Docker volume,
+mount the source checkout read-only, disable dependency lifecycle scripts during
+install, keep the app/Postgres network internal to Docker, and publish only
+localhost ports back to the host.
 
 Development with Docker Compose:
 
@@ -165,8 +171,30 @@ Development with Docker Compose:
 vp run docker:dev
 ```
 
-That runs `vp dev` inside the container on `0.0.0.0:3000` with the repo mounted
-into `/app`.
+That installs dependencies into the Docker `app_node_modules` volume, starts
+Postgres, and runs `vp dev` inside the container on `127.0.0.1:3000`.
+
+Dependency-backed checks can run without outbound network access after the
+Docker dependency volume has been populated:
+
+```bash
+docker compose --profile dev run --rm sandbox vp check
+docker compose --profile dev run --rm sandbox vp test
+```
+
+Refresh the sandboxed dependency volume after lockfile changes:
+
+```bash
+docker compose --profile dev run --rm dev-deps
+```
+
+The first dependency install still needs registry network access, but
+`bunfig.toml` and the Compose command both keep lifecycle scripts disabled.
+After dependencies are installed, use the `sandbox` service for commands that do
+not need the network. This does not make npm packages trustworthy, but it
+reduces the chance that package code can write to the host checkout, persist in
+host `node_modules`, or exfiltrate over the network during normal checks and
+tests.
 
 Storybook with Docker Compose:
 
@@ -174,8 +202,8 @@ Storybook with Docker Compose:
 vp run docker:storybook
 ```
 
-That runs Storybook inside the container on `0.0.0.0:6006` with the same source
-mount and dependency volume as the app dev profile.
+That runs Storybook inside the container on `127.0.0.1:6006` with the same
+read-only source mount and dependency volume as the app dev profile.
 
 Production-like build and runtime:
 
@@ -186,10 +214,12 @@ vp run docker:prod
 That builds the app with `vp build`, then runs the generated Nitro Node server
 from `.output/server/index.mjs`.
 
-Compose now uses one file with profiles:
+Compose uses one file with profiles:
 
+- `dev-deps` under the `dev` and `storybook` profiles
 - `app-dev` under the `dev` profile
 - `app-storybook` under the `storybook` profile
+- `sandbox` under the `dev` profile
 - `app-prod` under the `prod` profile
 
 Relevant runtime environment variables:
@@ -205,9 +235,9 @@ Nitro `node-server` output directly.
 
 ### Optimizing Docker build times with a pre-built base image
 
-The `base` stage in the Dockerfile installs `curl`, enables `corepack`, and
-downloads Vite+. Locally these layers are cached, but cloud platforms without
-Docker layer caching will re-run them on every deploy.
+The `base` stage in the Dockerfile installs `curl`, Bun, and Vite+. Locally
+these layers are cached, but cloud platforms without Docker layer caching will
+re-run them on every deploy.
 
 To skip this work, build the base image once using `Dockerfile.base` and push it
 to your container registry:

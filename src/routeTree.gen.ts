@@ -8,180 +8,172 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as TodosTodoIdRouteImport } from './routes/todos.$todoId'
-import { Route as ApiTodosRouteImport } from './routes/api/todos'
-import { Route as ApiTodosTodoIdRouteImport } from './routes/api/todos.$todoId'
-import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as LoginRouteImport } from "./routes/login";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as TodosTodoIdRouteImport } from "./routes/todos.$todoId";
+import { Route as ApiTodosRouteImport } from "./routes/api/todos";
+import { Route as ApiTodosTodoIdRouteImport } from "./routes/api/todos.$todoId";
+import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth.$";
 
 const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport
-} as any)
+  id: "/login",
+  path: "/login",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport
-} as any)
+  id: "/",
+  path: "/",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const TodosTodoIdRoute = TodosTodoIdRouteImport.update({
-  id: '/todos/$todoId',
-  path: '/todos/$todoId',
-  getParentRoute: () => rootRouteImport
-} as any)
+  id: "/todos/$todoId",
+  path: "/todos/$todoId",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const ApiTodosRoute = ApiTodosRouteImport.update({
-  id: '/api/todos',
-  path: '/api/todos',
-  getParentRoute: () => rootRouteImport
-} as any)
+  id: "/api/todos",
+  path: "/api/todos",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const ApiTodosTodoIdRoute = ApiTodosTodoIdRouteImport.update({
-  id: '/$todoId',
-  path: '/$todoId',
-  getParentRoute: () => ApiTodosRoute
-} as any)
+  id: "/$todoId",
+  path: "/$todoId",
+  getParentRoute: () => ApiTodosRoute,
+} as any);
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
-  id: '/api/auth/$',
-  path: '/api/auth/$',
-  getParentRoute: () => rootRouteImport
-} as any)
+  id: "/api/auth/$",
+  path: "/api/auth/$",
+  getParentRoute: () => rootRouteImport,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/api/todos': typeof ApiTodosRouteWithChildren
-  '/todos/$todoId': typeof TodosTodoIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/todos/$todoId': typeof ApiTodosTodoIdRoute
+  "/": typeof IndexRoute;
+  "/login": typeof LoginRoute;
+  "/api/todos": typeof ApiTodosRouteWithChildren;
+  "/todos/$todoId": typeof TodosTodoIdRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/todos/$todoId": typeof ApiTodosTodoIdRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/api/todos': typeof ApiTodosRouteWithChildren
-  '/todos/$todoId': typeof TodosTodoIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/todos/$todoId': typeof ApiTodosTodoIdRoute
+  "/": typeof IndexRoute;
+  "/login": typeof LoginRoute;
+  "/api/todos": typeof ApiTodosRouteWithChildren;
+  "/todos/$todoId": typeof TodosTodoIdRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/todos/$todoId": typeof ApiTodosTodoIdRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/api/todos': typeof ApiTodosRouteWithChildren
-  '/todos/$todoId': typeof TodosTodoIdRoute
-  '/api/auth/$': typeof ApiAuthSplatRoute
-  '/api/todos/$todoId': typeof ApiTodosTodoIdRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/login": typeof LoginRoute;
+  "/api/todos": typeof ApiTodosRouteWithChildren;
+  "/todos/$todoId": typeof TodosTodoIdRoute;
+  "/api/auth/$": typeof ApiAuthSplatRoute;
+  "/api/todos/$todoId": typeof ApiTodosTodoIdRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/login'
-    | '/api/todos'
-    | '/todos/$todoId'
-    | '/api/auth/$'
-    | '/api/todos/$todoId'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/login'
-    | '/api/todos'
-    | '/todos/$todoId'
-    | '/api/auth/$'
-    | '/api/todos/$todoId'
+    | "/"
+    | "/login"
+    | "/api/todos"
+    | "/todos/$todoId"
+    | "/api/auth/$"
+    | "/api/todos/$todoId";
+  fileRoutesByTo: FileRoutesByTo;
+  to: "/" | "/login" | "/api/todos" | "/todos/$todoId" | "/api/auth/$" | "/api/todos/$todoId";
   id:
-    | '__root__'
-    | '/'
-    | '/login'
-    | '/api/todos'
-    | '/todos/$todoId'
-    | '/api/auth/$'
-    | '/api/todos/$todoId'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/login"
+    | "/api/todos"
+    | "/todos/$todoId"
+    | "/api/auth/$"
+    | "/api/todos/$todoId";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  LoginRoute: typeof LoginRoute
-  ApiTodosRoute: typeof ApiTodosRouteWithChildren
-  TodosTodoIdRoute: typeof TodosTodoIdRoute
-  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  IndexRoute: typeof IndexRoute;
+  LoginRoute: typeof LoginRoute;
+  ApiTodosRoute: typeof ApiTodosRouteWithChildren;
+  TodosTodoIdRoute: typeof TodosTodoIdRoute;
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/todos/$todoId': {
-      id: '/todos/$todoId'
-      path: '/todos/$todoId'
-      fullPath: '/todos/$todoId'
-      preLoaderRoute: typeof TodosTodoIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/todos': {
-      id: '/api/todos'
-      path: '/api/todos'
-      fullPath: '/api/todos'
-      preLoaderRoute: typeof ApiTodosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/todos/$todoId': {
-      id: '/api/todos/$todoId'
-      path: '/$todoId'
-      fullPath: '/api/todos/$todoId'
-      preLoaderRoute: typeof ApiTodosTodoIdRouteImport
-      parentRoute: typeof ApiTodosRoute
-    }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: '/api/auth/$'
-      fullPath: '/api/auth/$'
-      preLoaderRoute: typeof ApiAuthSplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+    "/login": {
+      id: "/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof LoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/todos/$todoId": {
+      id: "/todos/$todoId";
+      path: "/todos/$todoId";
+      fullPath: "/todos/$todoId";
+      preLoaderRoute: typeof TodosTodoIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/api/todos": {
+      id: "/api/todos";
+      path: "/api/todos";
+      fullPath: "/api/todos";
+      preLoaderRoute: typeof ApiTodosRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/api/todos/$todoId": {
+      id: "/api/todos/$todoId";
+      path: "/$todoId";
+      fullPath: "/api/todos/$todoId";
+      preLoaderRoute: typeof ApiTodosTodoIdRouteImport;
+      parentRoute: typeof ApiTodosRoute;
+    };
+    "/api/auth/$": {
+      id: "/api/auth/$";
+      path: "/api/auth/$";
+      fullPath: "/api/auth/$";
+      preLoaderRoute: typeof ApiAuthSplatRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 interface ApiTodosRouteChildren {
-  ApiTodosTodoIdRoute: typeof ApiTodosTodoIdRoute
+  ApiTodosTodoIdRoute: typeof ApiTodosTodoIdRoute;
 }
 
 const ApiTodosRouteChildren: ApiTodosRouteChildren = {
-  ApiTodosTodoIdRoute: ApiTodosTodoIdRoute
-}
+  ApiTodosTodoIdRoute: ApiTodosTodoIdRoute,
+};
 
-const ApiTodosRouteWithChildren = ApiTodosRoute._addFileChildren(
-  ApiTodosRouteChildren
-)
+const ApiTodosRouteWithChildren = ApiTodosRoute._addFileChildren(ApiTodosRouteChildren);
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LoginRoute: LoginRoute,
   ApiTodosRoute: ApiTodosRouteWithChildren,
   TodosTodoIdRoute: TodosTodoIdRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute
-}
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
+import type { getRouter } from "./router.tsx";
+import type { createStart } from "@tanstack/react-start";
+declare module "@tanstack/react-start" {
   interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
+    ssr: true;
+    router: Awaited<ReturnType<typeof getRouter>>;
   }
 }

@@ -1,64 +1,141 @@
+x-dev-sandbox: &dev-sandbox
+  build:
+    context: .
+    target: base
+  image: tanstack-viteplus:dev-sandbox
+  working_dir: /app
+  init: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  read_only: true
+  tmpfs:
+    - /tmp
+    - /root/.cache
+    - /root/.vite-plus/cache
+  environment:
+    NODE_ENV: development
+  volumes:
+    - type: bind
+      source: .
+      target: /app
+      read_only: true
+    - type: volume
+      source: app_node_modules
+      target: /app/node_modules
+    - type: volume
+      source: app_output
+      target: /app/.output
+    - type: volume
+      source: app_tanstack
+      target: /app/.tanstack
+    - type: volume
+      source: app_bun_cache
+      target: /root/.bun/install/cache
+
 services:
   postgres:
     image: postgres:17
     ports:
-      - '5432:5432'
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: mydb
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-internal
+
+  dev-deps:
+    <<: *dev-sandbox
+    profiles: ["dev", "storybook"]
+    command:
+      - vp
+      - install
+      - --frozen-lockfile
+      - --ignore-scripts
+
   app-dev:
-    profiles: ['dev']
-    build:
-      context: .
-      target: dev
-    ports:
-      - '3000:3000'
+    <<: *dev-sandbox
+    profiles: ["dev"]
+    command:
+      - vp
+      - dev
+      - --host
+      - 0.0.0.0
+      - --port
+      - "3000"
+      - --strictPort
+    depends_on:
+      dev-deps:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_started
     environment:
+      NODE_ENV: development
       HOST: 0.0.0.0
       PORT: 3000
       DATABASE_URL: postgresql://user:password@postgres:5432/mydb
-    depends_on:
-      - postgres
-    volumes:
-      - .:/app
-      - app_node_modules:/app/node_modules
-      - app_output:/app/.output
-    command: vp run dev:docker
-  app-storybook:
-    profiles: ['storybook']
-    build:
-      context: .
-      target: dev
+    networks:
+      - app-internal
     ports:
-      - '6006:6006'
+      - "127.0.0.1:3000:3000"
+
+  app-storybook:
+    <<: *dev-sandbox
+    profiles: ["storybook"]
+    command:
+      - vp
+      - run
+      - storybook:docker
+    depends_on:
+      dev-deps:
+        condition: service_completed_successfully
     environment:
+      NODE_ENV: development
       HOST: 0.0.0.0
       PORT: 6006
-    volumes:
-      - .:/app
-      - app_node_modules:/app/node_modules
-      - app_output:/app/.output
-    command: vp run storybook:docker
+    networks:
+      - app-internal
+    ports:
+      - "127.0.0.1:6006:6006"
+
+  sandbox:
+    <<: *dev-sandbox
+    profiles: ["dev"]
+    command:
+      - vp
+      - test
+    network_mode: none
+
   app-prod:
-    profiles: ['prod']
+    profiles: ["prod"]
     build:
       context: .
       target: runtime
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
       PORT: 3000
       DATABASE_URL: postgresql://user:password@postgres:5432/mydb
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+    networks:
+      - app-internal
     command: node .output/server/index.mjs
+
+networks:
+  app-internal:
+    internal: true
 
 volumes:
   app_node_modules:
   app_output:
+  app_tanstack:
+  app_bun_cache:
   pgdata:
