@@ -46,6 +46,12 @@ vp check
 vp test
 ```
 
+## Graphify
+
+See [`docs/GRAPHIFY.md`](docs/GRAPHIFY.md) for optional local knowledge-graph
+setup. Graphify is installed separately with `pip install graphifyy`, then
+refreshed with `vp run graphify:update`.
+
 Container-specific scripts:
 
 ```bash

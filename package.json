@@ -23,7 +23,10 @@
     "docker:prod": "docker compose --profile prod up --build app-prod",
     "docker:storybook": "docker compose --profile storybook up --build app-storybook",
     "test": "vp test run",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "graphify:root": "node scripts/graphify-root.mjs",
+    "graphify:setup": "vp run graphify:root",
+    "graphify:update": "vp run graphify:root && graphify update . --force && graphify export callflow-html && vp run graphify:root"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.8",

@@ -14,3 +14,6 @@ storybook-static
 todos.json
 local.db
 *.db-journal
+
+# Remove if wanting to commit graphify
+graphify-out/
