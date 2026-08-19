@@ -9,6 +9,25 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+const getMutationIssue = (error: unknown) => {
+  if (error instanceof ApiClientError) {
+    return error.issues?.['title']?.[0] ?? error.message
+  }
+  if (isSchemaError(error)) {
+    const flattened = z.flattenError(error)
+
+    return (
+      flattened.formErrors[0] ??
+      Object.values(flattened.fieldErrors).flat()[0] ??
+      'The API returned an unexpected payload.'
+    )
+  }
+  if (error instanceof Error) {
+    return error.message
+  }
+  return null
+}
+
 export const TodoAddForm = () => {
   const createTodoMutation = useCreateTodoMutation()
   const titleSchema = createTodoInputSchema.shape.title
@@ -25,25 +44,6 @@ export const TodoAddForm = () => {
       } catch {}
     }
   })
-
-  const getMutationIssue = (error: unknown) => {
-    if (error instanceof ApiClientError) {
-      return error.issues?.['title']?.[0] ?? error.message
-    }
-    if (isSchemaError(error)) {
-      const flattened = z.flattenError(error)
-
-      return (
-        flattened.formErrors[0] ??
-        Object.values(flattened.fieldErrors).flat()[0] ??
-        'The API returned an unexpected payload.'
-      )
-    }
-    if (error instanceof Error) {
-      return error.message
-    }
-    return null
-  }
 
   const mutationIssue = getMutationIssue(createTodoMutation.error)
 

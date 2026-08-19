@@ -53,9 +53,7 @@ export const createTodoHandler = async ({ request }: { request: Request }) => {
 
     return Response.json(
       createTodoResponseSchema.parse({ item: toTodo(data) }),
-      {
-        status: 201
-      }
+      { status: 201 }
     )
   } catch (error) {
     return handleApiError(error, request)

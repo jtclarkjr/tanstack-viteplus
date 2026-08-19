@@ -37,6 +37,19 @@ const validateTodoTitle = (value: string) => {
     : (parsed.error.issues[0]?.message ?? 'Invalid todo title.')
 }
 
+const getMutationIssue = (error: unknown) => {
+  if (error instanceof ApiClientError) {
+    return error.issues?.['title']?.[0] ?? error.message
+  }
+  if (isSchemaError(error)) {
+    return error.issues[0]?.message ?? 'The API returned an unexpected payload.'
+  }
+  if (error instanceof Error) {
+    return error.message
+  }
+  return null
+}
+
 export const TodoItem = ({ todo }: { todo: Todo }) => {
   const updateTodoMutation = useUpdateTodoMutation()
   const deleteTodoMutation = useDeleteTodoMutation()
@@ -58,21 +71,6 @@ export const TodoItem = ({ todo }: { todo: Todo }) => {
       } catch {}
     }
   })
-
-  const getMutationIssue = (error: unknown) => {
-    if (error instanceof ApiClientError) {
-      return error.issues?.['title']?.[0] ?? error.message
-    }
-    if (isSchemaError(error)) {
-      return (
-        error.issues[0]?.message ?? 'The API returned an unexpected payload.'
-      )
-    }
-    if (error instanceof Error) {
-      return error.message
-    }
-    return null
-  }
 
   const mutationIssue =
     getMutationIssue(updateTodoMutation.error) ??

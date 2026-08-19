@@ -125,7 +125,7 @@ describe('TodosPage', () => {
         })
       }
 
-      throw new Error(`Unhandled fetch ${String(init?.method ?? 'GET')} ${url}`)
+      throw new Error(`Unhandled fetch ${init?.method ?? 'GET'} ${url}`)
     })
 
     renderPage()
@@ -175,7 +175,7 @@ describe('TodosPage', () => {
         })
       }
 
-      throw new Error(`Unhandled fetch ${String(init?.method ?? 'GET')} ${url}`)
+      throw new Error(`Unhandled fetch ${init?.method ?? 'GET'} ${url}`)
     })
 
     renderPage()
@@ -264,7 +264,7 @@ describe('TodosPage', () => {
         })
       }
 
-      throw new Error(`Unhandled fetch ${String(method)} ${url}`)
+      throw new Error(`Unhandled fetch ${method} ${url}`)
     })
 
     renderPage()
@@ -328,7 +328,7 @@ describe('TodosPage', () => {
         })
       }
 
-      throw new Error(`Unhandled fetch ${String(method)} ${url}`)
+      throw new Error(`Unhandled fetch ${method} ${url}`)
     })
 
     renderPage()

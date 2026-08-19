@@ -13,7 +13,7 @@ cloud version. Local development is useful for:
 
 - **Docker Desktop** - Required for running Supabase containers
 - **Homebrew** (macOS/Linux) or direct download for Supabase CLI
-- **Node.js 22+**
+- **Bun 1.3.14+**
 
 ## Step 1: Install Supabase CLI
 
@@ -116,7 +116,6 @@ VITE_SUPABASE_PUBLISHABLE_KEY=<anon key from supabase status>
 
 ```bash
 vp run db:seed
-# or: pnpm run db:seed
 ```
 
 This inserts 3 sample todos.

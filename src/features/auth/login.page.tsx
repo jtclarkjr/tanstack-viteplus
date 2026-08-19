@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { useRouter } from '@tanstack/react-router'
-import { AlertCircle, Github, Info, Loader2 } from 'lucide-react'
+import { AlertCircle, Info, Loader2 } from 'lucide-react'
 import { z } from 'zod'
 
 import {
@@ -77,13 +77,13 @@ const NotConfiguredCard = () => {
   )
 }
 
+const handleSso = async (provider: 'github' | 'google') => {
+  await signInWithOAuth(provider)
+}
+
 const SsoButtons = ({ providers }: { providers: AuthConfig['providers'] }) => {
   const hasAny = providers.github || providers.google
   if (!hasAny) return null
-
-  const handleSso = async (provider: 'github' | 'google') => {
-    await signInWithOAuth(provider)
-  }
 
   return (
     <>
@@ -100,7 +100,14 @@ const SsoButtons = ({ providers }: { providers: AuthConfig['providers'] }) => {
             onClick={() => void handleSso('github')}
             type="button"
           >
-            <Github className="size-4" />
+            <svg
+              aria-hidden="true"
+              className="size-4"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2C6.48 2 2 6.58 2 12.23c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49 0-.24-.01-1.04-.01-1.89-2.78.62-3.37-1.2-3.37-1.2-.45-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1 .08 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.86.09-.67.35-1.13.64-1.39-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.04-2.75-.1-.26-.45-1.3.1-2.71 0 0 .85-.28 2.75 1.05A9.28 9.28 0 0 1 12 6.85c.85 0 1.7.12 2.5.34 1.9-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.65.72 1.04 1.63 1.04 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.24 10.24 0 0 0 22 12.23C22 6.58 17.52 2 12 2Z" />
+            </svg>
             Continue with GitHub
           </Button>
         )}

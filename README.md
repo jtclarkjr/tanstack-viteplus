@@ -23,12 +23,10 @@ entrypoints.
 - React Query for client-side reads and writes
 - Zod as the shared runtime contract for request and response payloads
 - Tailwind CSS v4 + shadcn/ui for the UI layer
-- tsgo (`@typescript/native-preview`) for type checking instead of `tsc` — run
-  with `vp exec tsgo`
-- pnpm as the package manager of record (Only npm, pnpm, and yarn are compatible
-  with Vite+)
-- Vite+ as the day-to-day workflow wrapper (Required and can be installed from
-  [here](https://viteplus.dev))
+- Bun as the package manager of record, with `bunfig.toml` enforcing the
+  project’s install safeguards
+- Vite+ as the day-to-day workflow wrapper for formatting, linting, testing,
+  building, and staged checks
 
 ## Commands
 
@@ -43,9 +41,9 @@ vp test
 Container-specific scripts:
 
 ```bash
-pnpm run dev:docker
-pnpm run storybook:docker
-pnpm run start
+vp run docker:dev
+vp run docker:storybook
+vp run start
 ```
 
 If you change `package.json`, refresh dependencies with:
@@ -121,7 +119,7 @@ Vite+ currently resolves `vp create @tanstack/start` through the TanStack Start
 generator package, so the working scaffold command for this repo was:
 
 ```bash
-vp create @tanstack/start -- boilerplate-tanstack-start-viteplus --package-manager pnpm --add-ons tanstack-query --no-examples --no-git -f
+vp create @tanstack/start -- boilerplate-tanstack-start-viteplus --package-manager bun --add-ons tanstack-query --no-examples --no-git -f
 ```
 
 After scaffolding, Tailwind and shadcn/ui were initialized on top of the
@@ -179,9 +177,9 @@ Nitro `node-server` output directly.
 
 ### Optimizing Docker build times with a pre-built base image
 
-The `base` stage in the Dockerfile installs `curl`, enables `corepack`, and
-downloads Vite+. Locally these layers are cached, but cloud platforms without
-Docker layer caching will re-run them on every deploy.
+The `base` stage in the Dockerfile installs Bun and Vite+. Locally these layers
+are cached, but cloud platforms without Docker layer caching will re-run them
+on every deploy.
 
 To skip this work, build the base image once using `Dockerfile.base` and push
 it to your container registry:
@@ -249,7 +247,7 @@ This starter uses shadcn/ui with the current `start` template and the generated
 Add more shadcn components with:
 
 ```bash
-pnpm dlx shadcn@latest add <component>
+vp exec bunx shadcn@latest add <component>
 ```
 
 ## Testing

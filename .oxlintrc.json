@@ -23,6 +23,7 @@
     }
   ],
   "ignorePatterns": [
+    "*.md",
     "out",
     "build",
     ".storybook",

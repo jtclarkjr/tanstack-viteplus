@@ -9,30 +9,30 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TodosTodoIdRouteImport } from './routes/todos.$todoId'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as ApiTodosRouteImport } from './routes/api/todos'
+import { Route as TodosTodoIdRouteImport } from './routes/todos.$todoId'
 import { Route as ApiTodosTodoIdRouteImport } from './routes/api/todos.$todoId'
 
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TodosTodoIdRoute = TodosTodoIdRouteImport.update({
-  id: '/todos/$todoId',
-  path: '/todos/$todoId',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTodosRoute = ApiTodosRouteImport.update({
   id: '/api/todos',
   path: '/api/todos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TodosTodoIdRoute = TodosTodoIdRouteImport.update({
+  id: '/todos/$todoId',
+  path: '/todos/$todoId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiTodosTodoIdRoute = ApiTodosTodoIdRouteImport.update({
@@ -91,13 +91,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -105,11 +98,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/todos/$todoId': {
-      id: '/todos/$todoId'
-      path: '/todos/$todoId'
-      fullPath: '/todos/$todoId'
-      preLoaderRoute: typeof TodosTodoIdRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/todos': {
@@ -117,6 +110,13 @@ declare module '@tanstack/react-router' {
       path: '/api/todos'
       fullPath: '/api/todos'
       preLoaderRoute: typeof ApiTodosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/todos/$todoId': {
+      id: '/todos/$todoId'
+      path: '/todos/$todoId'
+      fullPath: '/todos/$todoId'
+      preLoaderRoute: typeof TodosTodoIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/todos/$todoId': {

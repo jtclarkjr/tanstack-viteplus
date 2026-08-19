@@ -47,7 +47,7 @@ export const TodoHero = () => {
                   <DatabaseZap className="size-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">pnpm workflow</p>
+                  <p className="text-sm font-medium">workflow</p>
                   <p className="text-sm text-muted-foreground">
                     `vp dev`, `vp check`, `vp test`
                   </p>

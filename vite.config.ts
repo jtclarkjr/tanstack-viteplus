@@ -8,6 +8,20 @@ import viteReact from '@vitejs/plugin-react'
 import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
+  staged: {
+    '*': 'vp check --fix'
+  },
+  fmt: {
+    $schema: './node_modules/oxfmt/configuration_schema.json',
+    semi: false,
+    tabWidth: 2,
+    singleQuote: true,
+    printWidth: 80,
+    trailingComma: 'none',
+    proseWrap: 'always',
+    sortPackageJson: false,
+    ignorePatterns: ['*.gen.ts', '*.md']
+  },
   lint: {
     plugins: ['react', 'typescript', 'unicorn'],
     categories: {
@@ -33,6 +47,8 @@ const config = defineConfig({
       }
     ],
     ignorePatterns: [
+      '*.gen.ts',
+      '*.md',
       'out',
       'build',
       '.storybook',
@@ -60,7 +76,7 @@ const config = defineConfig({
   plugins: [
     !process.env.VITEST && devtools(),
     !process.env.VITEST &&
-      nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+      nitro({ rolldownConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
     !process.env.VITEST && tanstackStart(),
     viteReact()
