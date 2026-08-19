@@ -38,7 +38,7 @@ services:
   postgres:
     image: postgres:17
     ports:
-      - "127.0.0.1:5432:5432"
+      - '127.0.0.1:5432:5432'
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -47,10 +47,11 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - app-internal
+      - host-published
 
   dev-deps:
     <<: *dev-sandbox
-    profiles: ["dev", "storybook"]
+    profiles: ['dev', 'storybook']
     command:
       - vp
       - install
@@ -59,14 +60,14 @@ services:
 
   app-dev:
     <<: *dev-sandbox
-    profiles: ["dev"]
+    profiles: ['dev']
     command:
       - vp
       - dev
       - --host
       - 0.0.0.0
       - --port
-      - "3000"
+      - '3000'
       - --strictPort
     depends_on:
       dev-deps:
@@ -81,11 +82,11 @@ services:
     networks:
       - app-internal
     ports:
-      - "127.0.0.1:3000:3000"
+      - '127.0.0.1:3000:3000'
 
   app-storybook:
     <<: *dev-sandbox
-    profiles: ["storybook"]
+    profiles: ['storybook']
     command:
       - vp
       - run
@@ -100,23 +101,23 @@ services:
     networks:
       - app-internal
     ports:
-      - "127.0.0.1:6006:6006"
+      - '127.0.0.1:6006:6006'
 
   sandbox:
     <<: *dev-sandbox
-    profiles: ["dev"]
+    profiles: ['dev']
     command:
       - vp
       - test
     network_mode: none
 
   app-prod:
-    profiles: ["prod"]
+    profiles: ['prod']
     build:
       context: .
       target: runtime
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       NODE_ENV: production
       HOST: 0.0.0.0
@@ -132,6 +133,7 @@ services:
 networks:
   app-internal:
     internal: true
+  host-published:
 
 volumes:
   app_node_modules:

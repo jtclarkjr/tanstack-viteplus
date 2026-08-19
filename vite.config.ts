@@ -1,73 +1,86 @@
-import { defineConfig } from "vite-plus";
-import { devtools } from "@tanstack/devtools-vite";
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from 'vite-plus'
+import { devtools } from '@tanstack/devtools-vite'
+import tailwindcss from '@tailwindcss/vite'
 
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 
-import viteReact from "@vitejs/plugin-react";
-import { nitro } from "nitro/vite";
+import viteReact from '@vitejs/plugin-react'
+import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
   staged: {
-    "*": "vp check --fix",
+    '*': 'vp check --fix'
+  },
+  fmt: {
+    $schema: './node_modules/oxfmt/configuration_schema.json',
+    semi: false,
+    tabWidth: 2,
+    singleQuote: true,
+    printWidth: 80,
+    trailingComma: 'none',
+    proseWrap: 'always',
+    sortPackageJson: false,
+    ignorePatterns: ['*.gen.ts', '*.md']
   },
   lint: {
-    plugins: ["react", "typescript", "unicorn"],
+    plugins: ['react', 'typescript', 'unicorn'],
     categories: {
-      correctness: "error",
-      suspicious: "warn",
+      correctness: 'error',
+      suspicious: 'warn'
     },
     rules: {
-      "func-style": ["error", "expression"],
-      "react/react-in-jsx-scope": "off",
+      'func-style': ['error', 'expression'],
+      'react/react-in-jsx-scope': 'off'
     },
     overrides: [
       {
-        files: ["src/components/**/*.{ts,tsx}"],
+        files: ['src/components/**/*.{ts,tsx}'],
         rules: {
-          "no-nested-ternary": "error",
-        },
+          'no-nested-ternary': 'error'
+        }
       },
       {
-        files: ["src/components/ui/**/*.{ts,tsx}", "**/*.stories.{ts,tsx}"],
+        files: ['src/components/ui/**/*.{ts,tsx}', '**/*.stories.{ts,tsx}'],
         rules: {
-          "no-nested-ternary": "off",
-        },
-      },
+          'no-nested-ternary': 'off'
+        }
+      }
     ],
     ignorePatterns: [
-      "*.md",
-      "out",
-      "build",
-      ".storybook",
-      ".storybook/**",
-      "storybook-static",
-      "storybook-static/**",
-      "public/**",
-      "src/routeTree.gen.ts",
+      '*.gen.ts',
+      '*.md',
+      'out',
+      'build',
+      '.storybook',
+      '.storybook/**',
+      'storybook-static',
+      'storybook-static/**',
+      'public/**',
+      'src/routeTree.gen.ts'
     ],
-    options: { typeAware: true, typeCheck: true },
+    options: { typeAware: true, typeCheck: true }
   },
   server: {
     watch: {
-      ignored: ["**/routeTree.gen.ts"],
-    },
+      ignored: ['**/routeTree.gen.ts']
+    }
   },
   resolve: {
-    tsconfigPaths: true,
+    tsconfigPaths: true
   },
   test: {
-    environment: "jsdom",
-    setupFiles: ["./src/test/setup.ts"],
-    pool: "forks",
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    pool: 'forks'
   },
   plugins: [
     !process.env.VITEST && devtools(),
-    !process.env.VITEST && nitro({ rolldownConfig: { external: [/^@sentry\//] } }),
+    !process.env.VITEST &&
+      nitro({ rolldownConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
     !process.env.VITEST && tanstackStart(),
-    viteReact(),
-  ],
-});
+    viteReact()
+  ]
+})
 
-export default config;
+export default config

@@ -63,14 +63,14 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     if (!mounted) {
-      return
+      return undefined
     }
 
     applyTheme(theme)
     window.localStorage.setItem(STORAGE_KEY, theme)
 
     if (theme !== 'system') {
-      return
+      return undefined
     }
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')

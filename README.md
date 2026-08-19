@@ -16,7 +16,7 @@ the primary interface for install, dev, build, lint, format, and test workflows;
 package scripts are mainly for project-specific cases such as Docker
 entrypoints.
 
-**Note:** Vite+ is still in the alpha phase and is fully open sourced
+**Note:** Vite+ is still in beta and is fully open sourced.
 
 - TanStack Start with file-based routing (see
   [docs/ROUTING.md](docs/ROUTING.md))
@@ -26,14 +26,92 @@ entrypoints.
 - Bun as the package manager of record through Vite+
 - Vite+ as the day-to-day workflow wrapper
 
-## Commands
+## Quick start: run the demo on the host
 
-Install `vp` from the [Vite+ site](https://vite.plus/) before running project
-commands:
+You need Docker and the Vite+ `vp` CLI. Install `vp` once from the
+[Vite+ site](https://vite.plus/):
 
 ```bash
 curl -fsSL https://vite.plus | bash
 ```
+
+Install the project dependencies and initialize Vite+'s managed agent and hook
+files:
+
+```bash
+vp install
+vp config
+```
+
+Create the local environment file:
+
+```bash
+cp .env.example .env
+```
+
+Before starting the app, make sure these three values are set in `.env`:
+
+```dotenv
+DATABASE_URL=postgresql://user:password@localhost:5432/mydb
+BETTER_AUTH_SECRET=replace-with-a-random-secret-at-least-32-characters-long
+BETTER_AUTH_URL=http://localhost:3000
+```
+
+The OAuth client IDs and secrets in `.env.example` are optional. `.env` is
+gitignored; use different secrets and URLs outside local development.
+
+Start PostgreSQL, create the tables, and insert the demo todos:
+
+```bash
+docker compose up postgres -d
+vp run db:push
+vp run db:seed
+```
+
+Start the app:
+
+```bash
+vp dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). The todo API is available
+at [http://localhost:3000/api/todos](http://localhost:3000/api/todos).
+
+Vite+ may print a note that `vp dev` is a built-in command and suggest
+`vpr dev` for the package script. That note is informational: `vp dev` is the
+intended command in this repository.
+
+Run the one-shot validation workflow with:
+
+```bash
+vp test run
+vp check
+vp build
+```
+
+### Common setup problems
+
+- `Cannot read properties of undefined (reading 'select')` from `/api/todos`
+  means `DATABASE_URL` was not loaded. Create `.env`, confirm the value above,
+  and restart `vp dev`.
+- `ECONNREFUSED` on port `5432` means PostgreSQL is not reachable. Run
+  `docker compose up postgres -d`, then confirm it is running with
+  `docker compose ps`.
+- `relation "todo" does not exist` means the database is running but has not
+  been initialized. Run `vp run db:push` followed by `vp run db:seed`.
+- A Better Auth base URL warning means `BETTER_AUTH_URL` is absent. Set it to
+  `http://localhost:3000` for this demo and restart the dev server.
+- An invalid React hook call after dependency updates can indicate a mixed or
+  stale `node_modules` tree. This repo uses Bun through Vite+; run
+  `vp install --force` and avoid installing with npm, pnpm, or Bun directly.
+
+Stop the local database without deleting its data with:
+
+```bash
+docker compose stop postgres
+```
+
+## Everyday commands
 
 Use Vite+ commands directly with `vp` when running on the host. For dependency
 isolation, prefer the Docker sandbox workflow below.
@@ -43,7 +121,19 @@ vp dev
 vp build
 vp preview
 vp check
-vp test
+vp test run
+```
+
+If `package.json` or the lockfile changes, refresh dependencies with
+`vp install`. The `.tanstack/` and `.output/` directories are generated lazily
+by normal `vp dev` and `vp build` commands.
+
+To generate and apply committed Drizzle migrations instead of pushing the
+development schema directly:
+
+```bash
+vp run db:generate
+vp run db:migrate
 ```
 
 ## Graphify
@@ -52,74 +142,7 @@ See [`docs/GRAPHIFY.md`](docs/GRAPHIFY.md) for optional local knowledge-graph
 setup. Graphify is installed separately with `pip install graphifyy`, then
 refreshed with `vp run graphify:update`.
 
-Container-specific scripts:
-
-```bash
-vp run dev:docker
-vp run storybook:docker
-vp run start
-```
-
-If you change `package.json`, refresh dependencies with:
-
-```bash
-vp install
-```
-
-## First-time setup
-
-For a fresh clone, dependency install and repo initialization are separate:
-
-```bash
-vp install
-vp config
-```
-
-- `vp install` installs dependencies only.
-- `vp config` initializes the Vite+ managed agent and hook files, including
-  `.vite-hooks/` and the linked agent instruction files in the repo.
-
-Some framework output folders are created lazily on first use rather than at
-install time:
-
-- `.tanstack/` is created by the TanStack Start toolchain during app
-  runs/builds.
-- `.output/` is created when you build or otherwise produce Nitro server output.
-
-If those folders are missing in a fresh checkout, run one of the normal app
-commands such as:
-
-```bash
-vp dev
-# or
-vp build
-```
-
-## Database setup
-
-The app requires a running Postgres instance. Start one with Docker Compose:
-
-```bash
-docker compose up postgres -d
-```
-
-Copy `.env.example` to `.env` (the default `DATABASE_URL` matches the Compose
-credentials). Then push the schema and seed data:
-
-```bash
-cp .env.example .env
-vp run db:push
-vp run db:seed
-```
-
-To generate migration files instead of pushing directly:
-
-```bash
-vp run db:generate
-vp run db:migrate
-```
-
-### Supabase alternative
+## Supabase alternative
 
 The **`supabase`** branch replaces Drizzle ORM and BetterAuth with
 `@supabase/supabase-js` for both database access and authentication. If you

@@ -27,6 +27,10 @@ const passwordSchema = z
   .string()
   .min(8, 'Password must be at least 8 characters')
 
+const handleSso = async (provider: 'github' | 'google') => {
+  await signIn.social({ provider, callbackURL: '/' })
+}
+
 const NotConfiguredCard = () => {
   return (
     <Card className="mx-auto w-full max-w-md">
@@ -73,10 +77,6 @@ const NotConfiguredCard = () => {
 const SsoButtons = ({ providers }: { providers: AuthConfig['providers'] }) => {
   const hasAny = providers.github || providers.google
   if (!hasAny) return null
-
-  const handleSso = async (provider: 'github' | 'google') => {
-    await signIn.social({ provider, callbackURL: '/' })
-  }
 
   return (
     <>

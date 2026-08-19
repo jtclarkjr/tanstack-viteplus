@@ -1,7 +1,7 @@
 # Graphify
 
-This boilerplate does not commit generated Graphify state. Each clone creates its own
-`graphify-out/` folder from the local project root.
+This boilerplate does not commit generated Graphify state. Each clone creates
+its own `graphify-out/` folder from the local project root.
 
 ## Requirements
 
@@ -19,8 +19,9 @@ vp run graphify:setup
 The `graphifyy` package provides the `graphify` command. The setup script writes
 `graphify-out/.graphify_root` from the current working directory.
 
-The root script is guarded: it refuses to write through symlinks, refuses path collisions, and will
-not replace an existing `.graphify_root` that points to a different directory unless you run:
+The root script is guarded: it refuses to write through symlinks, refuses path
+collisions, and will not replace an existing `.graphify_root` that points to a
+different directory unless you run:
 
 ```sh
 node scripts/graphify-root.mjs --force
@@ -32,8 +33,8 @@ node scripts/graphify-root.mjs --force
 vp run graphify:update
 ```
 
-This refreshes the AST-only graph and exports the call-flow HTML. Run it after code changes when you
-want the local graph to stay current.
+This refreshes the AST-only graph and exports the call-flow HTML. Run it after
+code changes when you want the local graph to stay current.
 
 ## Troubleshooting
 
@@ -49,8 +50,8 @@ or:
 Failed to initialize cache at `/Users/<user>/.cache/uv`
 ```
 
-the problem is usually uv's package cache, not this repo's `graphify-out/` cache. Clear uv's cache
-and rerun Graphify:
+the problem is usually uv's package cache, not this repo's `graphify-out/`
+cache. Clear uv's cache and rerun Graphify:
 
 ```sh
 uv cache clean
