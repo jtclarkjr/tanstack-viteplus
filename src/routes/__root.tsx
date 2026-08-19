@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         name: 'description',
         content:
-          'A TanStack Start starter wired with React Query, shared Zod API schemas, and a pnpm-first VitePlus workflow.'
+          'A TanStack Start starter wired with React Query, shared Zod API schemas, and a VitePlus workflow.'
       }
     ],
     links: [
