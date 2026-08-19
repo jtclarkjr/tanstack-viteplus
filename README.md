@@ -176,7 +176,7 @@ Vite+ currently resolves `vp create @tanstack/start` through the TanStack Start
 generator package, so the working scaffold command for this repo was:
 
 ```bash
-vp create @tanstack/start -- boilerplate-tanstack-start-viteplus --package-manager pnpm --add-ons tanstack-query --no-examples --no-git -f
+vp create @tanstack/start -- boilerplate-tanstack-start-viteplus --package-manager bun --add-ons tanstack-query --no-examples --no-git -f
 ```
 
 After scaffolding, Tailwind and shadcn/ui were initialized on top of the

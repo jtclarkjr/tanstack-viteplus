@@ -57,8 +57,8 @@ const NotConfiguredCard = () => {
                 Set <code>BETTER_AUTH_SECRET</code> to a random secret
               </li>
               <li>
-                Run <code>vp run db:push</code> (or{' '}
-                <code>pnpm run db:push</code>) to create tables
+                Run <code>vp run db:push</code> (or <code>bun run db:push</code>
+                ) to create tables
               </li>
               <li>Restart the dev server</li>
             </ol>
