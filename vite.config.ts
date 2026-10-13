@@ -68,6 +68,24 @@ const config = defineConfig({
   resolve: {
     tsconfigPaths: true
   },
+  environments: {
+    client: {
+      build: {
+        rolldownOptions: {
+          output: {
+            codeSplitting: {
+              groups: [
+                {
+                  name: 'react-vendor',
+                  test: /node_modules\/(?:react|react-dom|scheduler)\//
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
@@ -76,7 +94,36 @@ const config = defineConfig({
   plugins: [
     !process.env.VITEST && devtools(),
     !process.env.VITEST &&
-      nitro({ rolldownConfig: { external: [/^@sentry\//] } }),
+      nitro({
+        rolldownConfig: {
+          external: [/^@sentry\//],
+          onwarn(warning, warn) {
+            // Dependency RSC directives don't apply to TanStack Start's SSR.
+            if (
+              warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+              warning.message.includes('"use client"') &&
+              warning.message.includes('node_modules/')
+            ) {
+              return
+            }
+            warn(warning)
+          },
+          plugins: [
+            {
+              name: 'label-nitro-chunks',
+              outputOptions(options) {
+                const splitting = options.codeSplitting
+                if (splitting && splitting !== true) {
+                  splitting.groups = splitting.groups?.map((group) => ({
+                    ...group,
+                    debugName: 'nitro-dependencies'
+                  }))
+                }
+              }
+            }
+          ]
+        }
+      }),
     tailwindcss(),
     !process.env.VITEST && tanstackStart(),
     viteReact()

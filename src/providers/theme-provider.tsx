@@ -4,12 +4,22 @@ import {
   useEffect,
   useMemo,
   useState,
+  useSyncExternalStore,
   type ReactNode
 } from 'react'
+import { z } from 'zod'
 
 export type Theme = 'light' | 'dark' | 'system'
 
 const STORAGE_KEY = 'theme'
+const themeSchema = z.enum(['light', 'dark', 'system'])
+
+// The init script sets this snapshot before hydration; user choices live in state.
+const subscribeToInitialTheme = () => () => {}
+const getInitialTheme = (): Theme => {
+  const result = themeSchema.safeParse(document.documentElement.dataset.theme)
+  return result.success ? result.data : 'system'
+}
 
 const ThemeContext = createContext<
   | {
@@ -47,19 +57,14 @@ export const themeInitScript = `
 `
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme>('system')
-  const [mounted, setMounted] = useState<boolean>(false)
-
-  useEffect(() => {
-    const nextTheme = document.documentElement.dataset.theme
-    const resolvedTheme =
-      nextTheme === 'light' || nextTheme === 'dark' || nextTheme === 'system'
-        ? nextTheme
-        : 'system'
-
-    setThemeState(resolvedTheme)
-    setMounted(true)
-  }, [])
+  const initialTheme = useSyncExternalStore(
+    subscribeToInitialTheme,
+    getInitialTheme,
+    () => null
+  )
+  const [selectedTheme, setThemeState] = useState<Theme | null>(null)
+  const theme = selectedTheme ?? initialTheme ?? 'system'
+  const mounted = initialTheme !== null
 
   useEffect(() => {
     if (!mounted) {
