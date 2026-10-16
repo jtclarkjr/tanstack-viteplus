@@ -1,22 +1,22 @@
 {
+  "extends": "./.void/tsconfig.json",
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "target": "ES2023",
     "jsx": "react-jsx",
     "module": "ESNext",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@schema": ["./db/schema.ts"],
+      "@schema/*": ["./db/schema/*"],
+      "void/db": ["./.void/db.d.ts"]
     },
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
-
-    /* Bundler mode */
+    "types": ["vite/client", "void/env"],
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "noEmit": true,
-
-    /* Linting */
     "skipLibCheck": true,
     "strict": true,
     "noUnusedLocals": true,

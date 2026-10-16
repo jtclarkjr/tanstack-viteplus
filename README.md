@@ -1,7 +1,9 @@
-# TanStack Start and Vite+ Boilerplate
+# TanStack Start, Vite+, and Void Boilerplate
 
-This starter keeps the app small while showing the full pattern for a validated
-internal API:
+The `void` branch runs TanStack Start on Cloudflare Workers with a local D1
+database, Drizzle ORM, and Better Auth. Void provides the Workers runtime,
+database tooling, and deployment integration; TanStack Start owns routing and
+SSR.
 
 Vite+ in this repo is not just a faster frontend tool wrapper. It is designed to
 be AI-agent friendly: it keeps commands unified, syncs agent-facing Markdown and
@@ -12,9 +14,8 @@ toolchain.
 
 Make it a habit to reach for `vp` commands first instead of calling the package
 manager directly or defaulting to `package.json` scripts. In this repo, `vp` is
-the primary interface for install, dev, build, lint, format, and test workflows;
-package scripts are mainly for project-specific cases such as Docker
-entrypoints.
+the primary interface for install, dev, build, lint, format, and test workflows.
+Use package scripts for database tasks and Storybook.
 
 **Note:** Vite+ is still in beta and is fully open sourced.
 
@@ -25,46 +26,43 @@ entrypoints.
 - Tailwind CSS v4 + shadcn/ui for the UI layer
 - Bun as the package manager of record through Vite+
 - Vite+ as the day-to-day workflow wrapper
+- Void with Cloudflare Workers and D1
+- Better Auth with email/password and optional GitHub/Google OAuth
 
 ## Quick start: run the demo on the host
 
-You need Docker and the Vite+ `vp` CLI. Install `vp` once from the
+You need Node.js 24 and the Vite+ `vp` CLI. Install `vp` once from the
 [Vite+ site](https://vite.plus/):
 
 ```bash
 curl -fsSL https://vite.plus | bash
 ```
 
-Install the project dependencies and initialize Vite+'s managed agent and hook
-files:
-
-```bash
-vp install
-vp config
-```
-
 Create the local environment file:
 
 ```bash
-cp .env.example .env
+cp env.template .env
 ```
 
-Before starting the app, make sure these three values are set in `.env`:
+Set `BETTER_AUTH_SECRET` in `.env` to a random secret of at least 32 characters
+(generate one with `openssl rand -hex 32`) and keep the local base URL:
 
 ```dotenv
-DATABASE_URL=postgresql://user:password@localhost:5432/mydb
 BETTER_AUTH_SECRET=replace-with-a-random-secret-at-least-32-characters-long
 BETTER_AUTH_URL=http://localhost:3000
 ```
 
-The OAuth client IDs and secrets in `.env.example` are optional. `.env` is
-gitignored; use different secrets and URLs outside local development.
+The OAuth client IDs and secrets in `env.template` are optional. `.env` is
+gitignored; use different secrets and URLs outside local development. Local D1
+runs in the Workers runtime and needs no database server or `DATABASE_URL`.
 
-Start PostgreSQL, create the tables, and insert the demo todos:
+Install dependencies, generate Void's local types, apply the committed SQLite
+migrations, and insert the demo todos:
 
 ```bash
-docker compose up postgres -d
-vp run db:push
+vp install
+vp exec void prepare
+vp run db:migrate
 vp run db:seed
 ```
 
@@ -81,7 +79,7 @@ Vite+ may print a note that `vp dev` is a built-in command and suggest
 `vpr dev` for the package script. That note is informational: `vp dev` is the
 intended command in this repository.
 
-Run the one-shot validation workflow with:
+Run the validation workflow with:
 
 ```bash
 vp test run
@@ -91,30 +89,22 @@ vp build
 
 ### Common setup problems
 
-- `Cannot read properties of undefined (reading 'select')` from `/api/todos`
-  means `DATABASE_URL` was not loaded. Create `.env`, confirm the value above,
-  and restart `vp dev`.
-- `ECONNREFUSED` on port `5432` means PostgreSQL is not reachable. Run
-  `docker compose up postgres -d`, then confirm it is running with
-  `docker compose ps`.
-- `relation "todo" does not exist` means the database is running but has not
-  been initialized. Run `vp run db:push` followed by `vp run db:seed`.
+- A missing `.void/tsconfig.json` means generated types are absent. Run
+  `vp exec void prepare` after installing dependencies.
+- `no such table: todo` means local D1 has not been initialized. Run
+  `vp run db:migrate`, then `vp run db:seed`.
 - A Better Auth base URL warning means `BETTER_AUTH_URL` is absent. Set it to
   `http://localhost:3000` for this demo and restart the dev server.
 - An invalid React hook call after dependency updates can indicate a mixed or
   stale `node_modules` tree. This repo uses Bun through Vite+; run
   `vp install --force` and avoid installing with npm, pnpm, or Bun directly.
 
-Stop the local database without deleting its data with:
-
-```bash
-docker compose stop postgres
-```
+Local D1 data persists under `.void/`. Stop the dev server with Ctrl+C; keep
+`.void/` to retain your local data.
 
 ## Everyday commands
 
-Use Vite+ commands directly with `vp` when running on the host. For dependency
-isolation, prefer the Docker sandbox workflow below.
+Run development, checks, and Storybook directly on the host:
 
 ```bash
 vp dev
@@ -122,19 +112,67 @@ vp build
 vp preview
 vp check
 vp test run
+vp run storybook
 ```
 
 If `package.json` or the lockfile changes, refresh dependencies with
-`vp install`. The `.tanstack/` and `.output/` directories are generated lazily
-by normal `vp dev` and `vp build` commands.
+`vp install`, then `vp exec void prepare`. The `.void/`, `.tanstack/`,
+`.wrangler/`, and `dist/` directories contain generated files. `vp build`
+produces a Worker and client assets; `vp preview` serves the build locally in
+the Workers runtime.
 
-To generate and apply committed Drizzle migrations instead of pushing the
-development schema directly:
+After editing `db/schema.ts`, generate and review SQLite migrations before
+applying them:
 
 ```bash
 vp run db:generate
 vp run db:migrate
 ```
+
+`vp run db:seed` adds demo todos without resetting the database. Avoid
+`vp exec void db seed`: Void's built-in seed command resets local tables.
+
+## Cloudflare deployment
+
+This branch targets Cloudflare Workers. The Cloudflare account and Worker
+settings live in `void.config.ts`; commit `void.lock.json` to preserve resource
+IDs. Development, Storybook, and preview run on the host.
+
+Declare server environment values in `env.ts` and set production values with
+`vp exec void secret put`. Use a separate production `BETTER_AUTH_SECRET` and
+set `BETTER_AUTH_URL` to the deployed HTTPS origin. Add OAuth credentials only
+for providers you enable. Void does not upload your local `.env`.
+
+Before the first deployment, bootstrap the required secrets:
+
+```bash
+openssl rand -hex 32 | vp exec void secret put BETTER_AUTH_SECRET
+vp exec void secret put BETTER_AUTH_URL
+vp exec void secret list
+```
+
+Enter the production HTTPS origin at the URL prompt, such as
+`https://<worker>.<account-subdomain>.workers.dev`. The first secret command
+creates a private draft Worker if needed. Keep the production auth secret
+separate from the local development secret; later deployments reuse it.
+
+When you are ready to publish, run:
+
+```bash
+export CLOUDFLARE_WORKERS_SUBDOMAIN=jtclarkjr
+vp exec void deploy --platform cloudflare
+```
+
+The subdomain above matches the configured Cloudflare account. Export the
+matching account subdomain when changing accounts. Void uses it for readiness
+when Cloudflare omits deployment URLs and caches it after a successful deploy.
+The Worker configuration explicitly enables workers.dev and version previews.
+
+Deployment builds the app, provisions D1, and applies committed migrations.
+The generated GitHub workflow deploys pushes to `main`; configure its scoped
+`CLOUDFLARE_API_TOKEN` secret and any required readiness settings before using
+it. Keep authentication secrets in the Worker secret store. Setup and local
+validation do not deploy the app.
 
 ## Graphify
 
@@ -142,7 +180,11 @@ See [`docs/GRAPHIFY.md`](docs/GRAPHIFY.md) for optional local knowledge-graph
 setup. Graphify is installed separately with `pip install graphifyy`, then
 refreshed with `vp run graphify:update`.
 
-## Supabase alternative
+## Other branches
+
+The `main` branch uses Drizzle with PostgreSQL and Better Auth. Follow that
+branch's setup instructions if you choose it; its database and Node runtime
+configuration differ from this branch.
 
 The **`supabase`** branch replaces Drizzle ORM and BetterAuth with
 `@supabase/supabase-js` for both database access and authentication. If you
@@ -183,121 +225,21 @@ After scaffolding, Tailwind and shadcn/ui were initialized on top of the
 generated app so the starter ships with a real component baseline instead of ad
 hoc CSS alone.
 
-## Docker and Compose
-
-This repo includes a sandboxed local dev container flow, a Storybook container
-flow, and a production-like container flow.
-
-Prefer the Docker flow when working with untrusted or newly updated npm
-packages. The dev and Storybook services keep `node_modules` in a Docker volume,
-mount the source checkout read-only, disable dependency lifecycle scripts during
-install, keep the app/Postgres network internal to Docker, and publish only
-localhost ports back to the host.
-
-Development with Docker Compose:
-
-```bash
-vp run docker:dev
-```
-
-That installs dependencies into the Docker `app_node_modules` volume, starts
-Postgres, and runs `vp dev` inside the container on `127.0.0.1:3000`.
-
-Dependency-backed checks can run without outbound network access after the
-Docker dependency volume has been populated:
-
-```bash
-docker compose --profile dev run --rm sandbox vp check
-docker compose --profile dev run --rm sandbox vp test
-```
-
-Refresh the sandboxed dependency volume after lockfile changes:
-
-```bash
-docker compose --profile dev run --rm dev-deps
-```
-
-The first dependency install still needs registry network access, but
-`bunfig.toml` and the Compose command both keep lifecycle scripts disabled.
-After dependencies are installed, use the `sandbox` service for commands that do
-not need the network. This does not make npm packages trustworthy, but it
-reduces the chance that package code can write to the host checkout, persist in
-host `node_modules`, or exfiltrate over the network during normal checks and
-tests.
-
-Storybook with Docker Compose:
-
-```bash
-vp run docker:storybook
-```
-
-That runs Storybook inside the container on `127.0.0.1:6006` with the same
-read-only source mount and dependency volume as the app dev profile.
-
-Production-like build and runtime:
-
-```bash
-vp run docker:prod
-```
-
-That builds the app with `vp build`, then runs the generated Nitro Node server
-from `.output/server/index.mjs`.
-
-Compose uses one file with profiles:
-
-- `dev-deps` under the `dev` and `storybook` profiles
-- `app-dev` under the `dev` profile
-- `app-storybook` under the `storybook` profile
-- `sandbox` under the `dev` profile
-- `app-prod` under the `prod` profile
-
-Relevant runtime environment variables:
-
-```bash
-HOST=0.0.0.0
-PORT=3000
-NODE_ENV=production
-```
-
-The production container does not use `vp dev` or `vp preview`; it serves the
-Nitro `node-server` output directly.
-
-### Optimizing Docker build times with a pre-built base image
-
-The `base` stage in the Dockerfile installs `curl`, Bun, and Vite+. Locally
-these layers are cached, but cloud platforms without Docker layer caching will
-re-run them on every deploy.
-
-To skip this work, build the base image once using `Dockerfile.base` and push it
-to your container registry:
-
-```bash
-docker build -f Dockerfile.base -t <your-registry>/node-viteplus:latest .
-docker push <your-registry>/node-viteplus:latest
-```
-
-Then replace the entire `base` stage in the `Dockerfile` with:
-
-```dockerfile
-FROM <your-registry>/node-viteplus:latest AS base
-```
-
-Rebuild and push the base image whenever you need a newer Node.js or Vite+
-version.
-
 ## Project shape
 
 The todo feature is the reference implementation for adding new resources:
 
 - `src/routes/api/todos.ts`: internal JSON API route
 - `src/features/todos/todo.schema.ts`: shared Zod schemas and inferred types
-- `src/features/todos/todo.store.ts`: in-memory server data store
 - `src/features/todos/todo.api.ts`: typed fetch wrapper with runtime parsing
 - `src/features/todos/todo.query.ts`: React Query options and mutation
   invalidation
 - `src/features/todos/todos.page.tsx`: UI that exercises the whole flow
 - `src/components/ui/*`: shadcn/ui primitives used by the starter
 - `components.json`: shadcn/ui project configuration
+- `db/schema.ts`: SQLite tables for todos and Better Auth
+- `db/migrations/`: committed database migrations
+- `db/seed.sql`: repeatable demo inserts that preserve existing rows
 
 ## What the example proves
 
@@ -339,10 +281,12 @@ vp dlx shadcn@latest add <component>
 
 ## Testing
 
-Tests cover the two critical layers:
+Tests cover:
 
 - schema and API client validation behavior
 - UI query and mutation flow with mocked `fetch`
+- SQLite migrations, boolean/date mappings, auth foreign keys, and safe seeding
+- authentication and optional provider configuration
 
 Run them with:
 

@@ -4,6 +4,11 @@ This project uses TanStack Start with file-based routing. Routes live in
 `src/routes/` and are automatically collected into a generated route tree
 (`src/routeTree.gen.ts`) that the router consumes in `src/router.tsx`.
 
+On the `void` branch, Void supplies the Cloudflare Workers runtime and D1
+database. TanStack Start continues to handle pages, API routes, and server
+functions. Keep app routes under `src/routes/` using the conventions below.
+Use `voidPlugin()` before `tanstackStart()` in the Vite plugin array.
+
 ## File Conventions
 
 | File                           | Purpose                                                            |
@@ -82,7 +87,10 @@ export const Route = createFileRoute('/api/todos')({
 ```
 
 These handlers receive a `Request` and return a `Response`, running exclusively
-on the server.
+on the server. On the `void` branch they run in Workers, where server code can
+use `void/db` for D1 and `void/env` for declared environment values. Access the
+database and initialize authentication inside the request handler so the
+Workers bindings are available.
 
 ### Server Functions (`createServerFn`)
 
@@ -103,7 +111,9 @@ export const Route = createFileRoute('/todos')({
 })
 ```
 
-Loaders fetch data server-side so the page renders with data already available.
+Loaders run on the server for the initial render and in the browser during
+client navigation. Keep database access behind API routes or `createServerFn`;
+do not access Workers bindings directly from a shared loader.
 
 ## Project Structure
 

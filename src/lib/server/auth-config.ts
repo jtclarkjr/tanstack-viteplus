@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { env } from 'void/env'
 
 export type AuthConfig = {
   configured: boolean
@@ -11,17 +12,14 @@ export type AuthConfig = {
 
 export const getAuthConfig = createServerFn({ method: 'GET' }).handler(
   (): AuthConfig => {
-    const hasSecret = !!process.env.BETTER_AUTH_SECRET
-    const hasDb = !!process.env.DATABASE_URL
+    const configured = !!env.BETTER_AUTH_SECRET && !!env.BETTER_AUTH_URL
 
     return {
-      configured: hasSecret && hasDb,
+      configured,
       providers: {
-        email: hasSecret && hasDb,
-        github:
-          !!process.env.GITHUB_CLIENT_ID && !!process.env.GITHUB_CLIENT_SECRET,
-        google:
-          !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
+        email: configured,
+        github: !!env.GITHUB_CLIENT_ID && !!env.GITHUB_CLIENT_SECRET,
+        google: !!env.GOOGLE_CLIENT_ID && !!env.GOOGLE_CLIENT_SECRET
       }
     }
   }

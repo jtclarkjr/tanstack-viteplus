@@ -2,11 +2,7 @@
 import { useEffect } from 'react'
 import type { Preview } from '@storybook/react-vite'
 
-import {
-  ThemeProvider,
-  useTheme,
-  type Theme
-} from '@/components/theme-provider'
+import { ThemeProvider, useTheme, type Theme } from '@/providers/theme-provider'
 import '@/styles.css'
 
 function StorybookThemeSync({ theme }: { theme: Theme }) {

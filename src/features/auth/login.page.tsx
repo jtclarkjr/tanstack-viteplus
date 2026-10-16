@@ -46,19 +46,19 @@ const NotConfiguredCard = () => {
           <AlertTitle>Setup Required</AlertTitle>
           <AlertDescription>
             <p>
-              Copy <code className="text-xs">.env.example</code> to{' '}
+              Copy <code className="text-xs">env.template</code> to{' '}
               <code className="text-xs">.env</code> and configure:
             </p>
             <ol className="mt-2 list-inside list-decimal space-y-1 text-xs">
               <li>
-                Set <code>DATABASE_URL</code> to your Postgres connection string
+                Set <code>BETTER_AUTH_SECRET</code> to a random secret of at
+                least 32 characters
               </li>
               <li>
-                Set <code>BETTER_AUTH_SECRET</code> to a random secret
+                Set <code>BETTER_AUTH_URL</code> to your app&apos;s URL
               </li>
               <li>
-                Run <code>vp run db:push</code> (or <code>bun run db:push</code>
-                ) to create tables
+                Run <code>vp run db:migrate</code> to create the local D1 tables
               </li>
               <li>Restart the dev server</li>
             </ol>

@@ -17,3 +17,8 @@ local.db
 
 # Remove if wanting to commit graphify
 graphify-out/
+.void
+.void-wrangler.jsonc
+.env.*
+*.tsbuildinfo
+void.lock.json

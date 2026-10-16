@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite-plus'
+import { defineConfig, lazyPlugins } from 'vite-plus'
 import { devtools } from '@tanstack/devtools-vite'
 import tailwindcss from '@tailwindcss/vite'
 
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 
 import viteReact from '@vitejs/plugin-react'
-import { nitro } from 'nitro/vite'
+import { voidPlugin } from 'void'
 
 const config = defineConfig({
   staged: {
@@ -66,7 +66,8 @@ const config = defineConfig({
     }
   },
   resolve: {
-    tsconfigPaths: true
+    tsconfigPaths: true,
+    dedupe: ['solid-js']
   },
   environments: {
     client: {
@@ -91,43 +92,13 @@ const config = defineConfig({
     setupFiles: ['./src/test/setup.ts'],
     pool: 'forks'
   },
-  plugins: [
+  plugins: lazyPlugins(() => [
     !process.env.VITEST && devtools(),
-    !process.env.VITEST &&
-      nitro({
-        rolldownConfig: {
-          external: [/^@sentry\//],
-          onwarn(warning, warn) {
-            // Dependency RSC directives don't apply to TanStack Start's SSR.
-            if (
-              warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
-              warning.message.includes('"use client"') &&
-              warning.message.includes('node_modules/')
-            ) {
-              return
-            }
-            warn(warning)
-          },
-          plugins: [
-            {
-              name: 'label-nitro-chunks',
-              outputOptions(options) {
-                const splitting = options.codeSplitting
-                if (splitting && splitting !== true) {
-                  splitting.groups = splitting.groups?.map((group) => ({
-                    ...group,
-                    debugName: 'nitro-dependencies'
-                  }))
-                }
-              }
-            }
-          ]
-        }
-      }),
+    !process.env.VITEST && voidPlugin(),
     tailwindcss(),
     !process.env.VITEST && tanstackStart(),
     viteReact()
-  ]
+  ])
 })
 
 export default config
